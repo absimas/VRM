@@ -8,7 +8,7 @@ Implementation of Virtual and Real Machines (OS course assignment #2)
  - Class names start with capitals and are CamelCased = *SomeClass*
  - File names are underscore separated = *hello_world.java*
  - Constants (static final) = uppercase, underscore = *SOME_CONSTANT*
- - Variables are camel cased = *someVariable*
+ - Variables are CamelCased = *someVariable*
 - Indentation = 2 spaces (not tab)
 - All commited and pushed code MUST compile. If you're not finished - don't mislead others.
 - Keep the code as clean as possible

@@ -14,3 +14,6 @@ Implementation of Virtual and Real Machines (OS course assignment #2)
 - Keep the code as clean as possible
 - If it's hard - simplify it
 - If it takes time to understand - comment it
+
+## UI:
+![ui](/vrm.png)

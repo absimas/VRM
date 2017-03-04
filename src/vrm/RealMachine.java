@@ -57,6 +57,10 @@ public class RealMachine {
    * Default timer value. [0..99].
    */
   public static final int DEFAULT_TIMER = 10;
+  /**
+   * Real machine memory size in words.
+   */
+  public static final int RM_MEMORY_SIZE = 1000;
 
   /**
    * Temporary. Size 5 bytes.
@@ -98,6 +102,11 @@ public class RealMachine {
    * Busy channels. Bitmask [1..3]. 1 Byte.
    */
   public int BUSY = 0;
+
+  /**
+   * Memory in words. The size is determined by {@link #RM_MEMORY_SIZE}.
+   */
+  public final Word[] MEMORY = new Word[RM_MEMORY_SIZE];
 
   /**
    * Check whether a channel has been marked as busy.

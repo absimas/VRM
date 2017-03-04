@@ -5,7 +5,7 @@ package vrm;
  */
 public class Word {
 
-  private static final int WORD_LENGTH = 5;
+  public static final int WORD_LENGTH = 5;
 
   public final char[] symbols;
 

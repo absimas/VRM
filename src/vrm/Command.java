@@ -9,7 +9,6 @@ import com.sun.istack.internal.Nullable;
 public class Command {
 
   public enum Type {
-
     CR(3), CM(3), AD(3), SB(3), ML(3), MD(3), DV(3), CP(3), JP(3), JE(3), JL(3), JM(3), HALT(0), GD(3), PD(3), RD(3), WD(3), SD(3), GT(3), PT(3), STVM(1), SVRG(1), LDRG(1);
 
     private final int argCount;
@@ -17,7 +16,6 @@ public class Command {
     Type(int argCount) {
       this.argCount = argCount;
     }
-
   }
 
   /**
@@ -62,6 +60,63 @@ public class Command {
 
     // Third arg
     this.z = args[2];
+  }
+
+  /**
+   * Convert a {@link Word} into a {@link Command}.
+   * @param word word to be parsed
+   * @return parsed command
+   * @throws InvalidCommandException thrown when command couldn't be recognized
+   * @throws InvalidArgumentsException thrown when command was recognized but its arguments were invalid
+   */
+  @Nullable
+  public static Command parse(@NotNull Word word) throws InvalidCommandException, InvalidArgumentsException {
+    final String stringWord = new String(word.symbols);
+
+    final Integer[] args;
+    for (Type type : Type.values()) {
+      if (stringWord.startsWith(type.name())) {
+        args = extractArguments(word, Type.CR);
+        return new Command(type, args);
+      }
+    }
+
+    throw new InvalidCommandException("Unrecognized command from word: " + word);
+  }
+
+  /**
+   * Extract arguments from a word.
+   * @param word word that contains the command and its arguments.
+   * @param type command type
+   * @return extracted arguments parsed into an int[]
+   * @throws InvalidArgumentsException when type argument count doesn't match this word or when the arguments cannot be parsed into integers
+   */
+  @Nullable
+  public static Integer[] extractArguments(@NotNull Word word, Type type) throws InvalidArgumentsException {
+    final String stringWord = new String(word.symbols);
+
+    // If this command isn't supposed to have any arguments, ignore the remaining word.
+    if (type.argCount == 0) return null;
+
+    // Remove command from word. E.g. AD105 becomes 105.
+    final String arguments = stringWord.substring(type.name().length(), stringWord.length());
+
+    // Ensure char count matches the expected argument count
+    if (type.argCount != arguments.length()) {
+      throw new InvalidArgumentsException(String.format("Invalid arguments detected for type %s. Word was %s", type, word));
+    }
+
+    // Extract arguments converted to ints
+    final Integer[] args = new Integer[arguments.length()];
+    try {
+      for (int i = 0; i < arguments.length(); i++) {
+        args[i] = Integer.parseInt(String.valueOf(arguments.charAt(i)));
+      }
+    } catch (NumberFormatException ignored) {
+      throw new InvalidArgumentsException(String.format("Invalid arguments detected for type %s. Word was %s", type, word));
+    }
+
+    return args;
   }
 
 }

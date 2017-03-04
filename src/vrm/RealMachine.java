@@ -65,7 +65,7 @@ public class RealMachine {
   /**
    * Temporary. Size 5 bytes.
    */
-  public int[] TMP = new int[] { 0, 0, 0, 0, 0 };
+  public Word TMP = new Word("00000");
   /**
    * Page Table Register. Size 4 bytes.
    */
@@ -97,7 +97,7 @@ public class RealMachine {
   /**
    * Processor mode. 1 byte.
    */
-  public Mode MODE = Mode.U;
+  public Mode MODE = Mode.S;
   /**
    * Busy channels. Bitmask [1..3]. 1 Byte.
    */

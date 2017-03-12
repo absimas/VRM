@@ -45,18 +45,24 @@ public class Memory implements Iterable<Word> {
   }
 
   /**
-   * @see List#get(int)
+   * Fetches the word at the given index.
+   * @throws MemoryOutOfBoundsException when referring to a word outside the given memory block
    */
-  public Word get(int index) {
-    return words.get(index);
+  public Word get(int index) throws MemoryOutOfBoundsException {
+    try {
+      return words.get(index);
+    } catch (IndexOutOfBoundsException ignored) {
+      throw new MemoryOutOfBoundsException(ignored);
+    }
   }
 
   /**
    * Convenience method to access and replace a specific word.
    * @param index  word index
    * @param word   replacement
+   * @throws MemoryOutOfBoundsException when referring to a word outside the given memory block
    */
-  public void replace(int index, String word) {
+  public void replace(int index, String word) throws MemoryOutOfBoundsException {
     get(index).replace(word);
   }
 

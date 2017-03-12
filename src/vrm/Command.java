@@ -29,7 +29,7 @@ public class Command {
    */
   public final Integer x, y, z;
 
-  public Command(@NotNull Type type, @Nullable Integer... args) {
+  public Command(@NotNull Type type, @Nullable int... args) {
     this.type = type;
 
     int argCount = 0;
@@ -71,6 +71,14 @@ public class Command {
   }
 
   /**
+   * Convenience method to put all argument fields {@link #x}, {@link #y} and {@link #z} into an array.
+   * @return
+   */
+  public int[] getArguments() {
+    return new int[] { x, y, z };
+  }
+
+  /**
    * Convert a {@link Word} into a {@link Command}.
    * @param word word to be parsed
    * @return parsed command
@@ -81,7 +89,7 @@ public class Command {
   public static Command parse(@NotNull Word word) throws InvalidCommandException, InvalidArgumentsException {
     final String stringWord = new String(word.getSymbols());
 
-    final Integer[] args;
+    final int[] args;
     for (Type type : Type.values()) {
       if (stringWord.startsWith(type.name())) {
         args = extractArguments(word, Type.CR);
@@ -100,7 +108,7 @@ public class Command {
    * @throws InvalidArgumentsException when type argument count doesn't match this word or when the arguments cannot be parsed into integers
    */
   @Nullable
-  public static Integer[] extractArguments(@NotNull Word word, Type type) throws InvalidArgumentsException {
+  public static int[] extractArguments(@NotNull Word word, Type type) throws InvalidArgumentsException {
     final String stringWord = new String(word.getSymbols());
 
     // If this command isn't supposed to have any arguments, ignore the remaining word.
@@ -115,7 +123,7 @@ public class Command {
     }
 
     // Extract arguments converted to ints
-    final Integer[] args = new Integer[arguments.length()];
+    final int[] args = new int[arguments.length()];
     try {
       for (int i = 0; i < arguments.length(); i++) {
         args[i] = Integer.parseInt(String.valueOf(arguments.charAt(i)));

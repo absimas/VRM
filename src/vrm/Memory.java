@@ -67,6 +67,16 @@ public class Memory implements Iterable<Word> {
   }
 
   /**
+   * Convenience method to access and replace a specific word.
+   * @param index  word index
+   * @param word   replacement
+   * @throws MemoryOutOfBoundsException when referring to a word outside the given memory block
+   */
+  public void replace(int index, Word word) throws MemoryOutOfBoundsException {
+    get(index).replace(word.toString());
+  }
+
+  /**
    * Get memory sublist.
    * @param from  starting index (inclusive). Must be less than {@link #size()}.
    * @param to    ending index (exclusive). Must be less than {@link #size()}.

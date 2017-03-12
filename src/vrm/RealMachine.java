@@ -1,9 +1,28 @@
 package vrm;
 
 /**
- * Created by Simas on 2017 Mar 04.
+ * ToDo make this an extension of VM. The memory will be passed by the creator, hmmm who creates the RM?
+ * Let's say someone creates a RM and gives it memory. Then VM ban be a direct descendant of it.
+ * BUT, who creates the VMs? Is it the same entity that created RM?
+ *   Let's say that for now VM's are a part of VRM class. VRM creates the RM and the VM.
+ *     Then, when VM encounters STVM, we throw and go up to the VRM which will then create a new VM. Then the control goes back to VM?
+ *       Klausimas: Turime komandą sukurti VM. Ar tą turime pavaizduoti savo programoje ar galime teigti, kad VMai jau sukurti?
+ *         Jei turime leisti kurti VMus, kur juos saugoti?
+ *           VRM.VM[]
+ *           VRM creates VMs and stores them in VM[]
+ *           Each VM is used to execute programs
+ *           When VMs throw, VRM handles and possibly gives control to RM (no control passing for now?)
+ *             But shouldn't this be the work of the OS? Maybe VRM will later become the OS? But no. VMs should be created by the OS and the OS should be created by the RM.
+ *               Thus, if VM throws, OS receives the error.
+ *               ----
+ *               For now, if VM throws, VRM receives and transfers control to RM to handle the error.
+ *               If RM encounters STVM(1), it also throws and asks VRM to create a VM.
+ *               ----
+ * The CREATOR also needs to catch the interrupt exceptions thrown when executing commands in VM.
+ * When VM throws when executing a command, RM comes to control and executes interruption paprogramę.
+ *   RM comes into control - undefined for now.
  */
-public class RealMachine {
+public class RealMachine extends Machine {
 
   public enum Mode {
     /**
@@ -16,23 +35,7 @@ public class RealMachine {
     U
   }
 
-  /**
-   * Super Interruptions caused by a specific type Command ({@link Command.Type}).
-   */
-  public enum SuperInterrupt {
-    GD(Command.Type.GD),
-    PD(Command.Type.PD),
-    RD(Command.Type.RD),
-    WD(Command.Type.WD),
-    SD(Command.Type.SD),
-    HALT(Command.Type.HALT);
 
-    private final Command.Type cause;
-
-    SuperInterrupt(Command.Type cause) {
-      this.cause = cause;
-    }
-  }
 
   /**
    * Program Interruptions caused internal and source code problems.
@@ -57,27 +60,11 @@ public class RealMachine {
    * Default timer value. [0..99].
    */
   public static final int DEFAULT_TIMER = 10;
-  /**
-   * Real machine memory size in words.
-   */
-  public static final int RM_MEMORY_SIZE = 1000;
 
   /**
-   * Temporary. Size 5 bytes.
-   */
-  public int[] TMP = new int[] { 0, 0, 0, 0, 0 };
-  /**
-   * Page Table Register. Size 4 bytes.
+   * Current VM memory Page Table Register. Size 4 bytes. ToDo change to a reference to VM or PTR class.
    */
   public int[] PTR = new int[] { 0, 0, 0, 0 };
-  /**
-   * Instruction Counter. [0..999]. Size 3 bytes.
-   */
-  public int[] IC = new int[] { 0, 0, 0 };
-  /**
-   * Comparison result. Size 1 byte.
-   */
-  public Comparison C = Comparison.EQUAL;
   /**
    * Program Interrupt. Default value = null. Size 1 byte.
    */
@@ -103,10 +90,9 @@ public class RealMachine {
    */
   public int BUSY = 0;
 
-  /**
-   * Memory in words. The size is determined by {@link #RM_MEMORY_SIZE}.
-   */
-  public final Word[] MEMORY = new Word[RM_MEMORY_SIZE];
+  protected RealMachine(Memory memory) {
+    super(memory);
+  }
 
   /**
    * Check whether a channel has been marked as busy.

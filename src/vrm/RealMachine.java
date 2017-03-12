@@ -16,7 +16,23 @@ public class RealMachine extends Machine {
     U
   }
 
+  /**
+   * Super Interruptions caused by a specific type Command ({@link Command.Type}).
+   */
+  public enum SuperInterrupt {
+    GD(Command.Type.GD),
+    PD(Command.Type.PD),
+    RD(Command.Type.RD),
+    WD(Command.Type.WD),
+    SD(Command.Type.SD),
+    HALT(Command.Type.HALT);
 
+    private final Command.Type cause;
+
+    SuperInterrupt(Command.Type cause) {
+      this.cause = cause;
+    }
+  }
 
   /**
    * Program Interruptions caused internal and source code problems.
@@ -71,7 +87,7 @@ public class RealMachine extends Machine {
    */
   public int BUSY = 0;
 
-  protected RealMachine(Memory memory) {
+  public RealMachine(Memory memory) {
     super(memory);
   }
 
@@ -86,6 +102,36 @@ public class RealMachine extends Machine {
     }
 
     return Utils.checkFlag(BUSY, i);
+  }
+
+  @Override
+  public void execute(Command command) throws UnhandledCommandException, MemoryOutOfBoundsException {
+    switch (command.type) {
+      case GD:
+        break;
+      case PD:
+        break;
+      case RD:
+        break;
+      case WD:
+        break;
+      case SD:
+        break;
+      case HALT:
+        break;
+      case GT:
+        break;
+      case PT:
+        break;
+      case STVM:
+        break;
+      case SVRG:
+        break;
+      case LDRG:
+        break;
+      default:
+        super.execute(command);
+    }
   }
 
 }

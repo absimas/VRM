@@ -62,4 +62,20 @@ public class Word {
     return Integer.valueOf(toString());
   }
 
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+
+    Word word = (Word) o;
+
+    return Arrays.equals(symbols, word.symbols);
+
+  }
+
+  @Override
+  public int hashCode() {
+    return Arrays.hashCode(symbols);
+  }
+
 }

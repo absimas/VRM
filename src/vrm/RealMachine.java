@@ -1,26 +1,7 @@
 package vrm;
 
 /**
- * ToDo make this an extension of VM. The memory will be passed by the creator, hmmm who creates the RM?
- * Let's say someone creates a RM and gives it memory. Then VM ban be a direct descendant of it.
- * BUT, who creates the VMs? Is it the same entity that created RM?
- *   Let's say that for now VM's are a part of VRM class. VRM creates the RM and the VM.
- *     Then, when VM encounters STVM, we throw and go up to the VRM which will then create a new VM. Then the control goes back to VM?
- *       Klausimas: Turime komandą sukurti VM. Ar tą turime pavaizduoti savo programoje ar galime teigti, kad VMai jau sukurti?
- *         Jei turime leisti kurti VMus, kur juos saugoti?
- *           VRM.VM[]
- *           VRM creates VMs and stores them in VM[]
- *           Each VM is used to execute programs
- *           When VMs throw, VRM handles and possibly gives control to RM (no control passing for now?)
- *             But shouldn't this be the work of the OS? Maybe VRM will later become the OS? But no. VMs should be created by the OS and the OS should be created by the RM.
- *               Thus, if VM throws, OS receives the error.
- *               ----
- *               For now, if VM throws, VRM receives and transfers control to RM to handle the error.
- *               If RM encounters STVM(1), it also throws and asks VRM to create a VM.
- *               ----
- * The CREATOR also needs to catch the interrupt exceptions thrown when executing commands in VM.
- * When VM throws when executing a command, RM comes to control and executes interruption paprogramę.
- *   RM comes into control - undefined for now.
+ * Created by Simas on 2017 Mar 04.
  */
 public class RealMachine extends Machine {
 

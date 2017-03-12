@@ -71,7 +71,7 @@ public class Command {
    */
   @Nullable
   public static Command parse(@NotNull Word word) throws InvalidCommandException, InvalidArgumentsException {
-    final String stringWord = new String(word.symbols);
+    final String stringWord = new String(word.getSymbols());
 
     final Integer[] args;
     for (Type type : Type.values()) {
@@ -93,7 +93,7 @@ public class Command {
    */
   @Nullable
   public static Integer[] extractArguments(@NotNull Word word, Type type) throws InvalidArgumentsException {
-    final String stringWord = new String(word.symbols);
+    final String stringWord = new String(word.getSymbols());
 
     // If this command isn't supposed to have any arguments, ignore the remaining word.
     if (type.argCount == 0) return null;

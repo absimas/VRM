@@ -63,6 +63,14 @@ public class Command {
   }
 
   /**
+   * Convert fields {@link #x}, {@link #y} and {@link #z} to a complete argument using the formula: x * 100 + y * 10 + z.
+   * @return complete argument
+   */
+  public int getArgument() {
+    return x * 100 + y * 10 + z;
+  }
+
+  /**
    * Convert a {@link Word} into a {@link Command}.
    * @param word word to be parsed
    * @return parsed command

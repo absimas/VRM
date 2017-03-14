@@ -1,45 +1,48 @@
 package vrm;
 
-import com.sun.istack.internal.NotNull;
-
 /**
  * Created by Simas on 2017 Mar 04.
  */
-public class VirtualMachine {
+public class VirtualMachine extends Machine {
 
   /**
-   * Real machine memory size in words.
+   * Counter for instantiated VMs.
    */
-  public static final int VM_MEMORY_SIZE = 100;
+  private static int VM_IDS = 0;
 
   /**
-   * Temporary. Size 5 bytes.
+   * Reference to a RM that handles this VM.
    */
-  public int[] TMP = new int[] { 0, 0, 0, 0, 0 };
+  private final RealMachine realMachine;
   /**
-   * Instruction Counter. [0..99]. Size 2 bytes.
+   * Unique id for this VM instance.
    */
-  public int[] IC = new int[] { 0, 0 };
-  /**
-   * Comparison result. Size 1 byte.
-   */
-  public Comparison C = Comparison.EQUAL;
+  private final int id = VM_IDS++;
 
-  /**
-   * Memory in words. The size is determined by {@link #VM_MEMORY_SIZE}.
-   */
-  private final Word[] MEMORY;
+  public VirtualMachine(RealMachine realMachine, Memory memory) {
+    super(memory);
+    this.realMachine = realMachine;
+  }
 
-  /**
-   *
-   * @param memory
-   */
-  public VirtualMachine(@NotNull Word[] memory) {
-    if (memory.length != VM_MEMORY_SIZE) {
-      throw new IllegalArgumentException("VM memory must be of size " + VM_MEMORY_SIZE);
+  @Override
+  public void execute(Command command) throws UnhandledCommandException, MemoryOutOfBoundsException {
+    switch (command.type) {
+      // Commands that require super privileges - throw
+      case GD: case PD: case RD: case WD: case SD: case HALT:
+        throw new UnhandledCommandException(command, String.format("Command %s wasn't handled in %s.", command, this));
+      // ToDo can we forbid these commands in a VM?
+      case GT: case PT: case STVM: case SVRG: case LDRG:
+        throw new UnhandledCommandException(command, String.format("Command %s shouldn't be handled virtually.", command));
+      // Other commands invoke the default handling
+      default:
+        super.execute(command);
+        break;
     }
+  }
 
-    MEMORY = memory;
+  @Override
+  public String toString() {
+    return String.format("VM%d", id);
   }
 
 }

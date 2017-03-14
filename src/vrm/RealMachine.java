@@ -3,7 +3,7 @@ package vrm;
 /**
  * Created by Simas on 2017 Mar 04.
  */
-public class RealMachine {
+public class RealMachine extends Machine {
 
   public enum Mode {
     /**
@@ -57,27 +57,11 @@ public class RealMachine {
    * Default timer value. [0..99].
    */
   public static final int DEFAULT_TIMER = 10;
-  /**
-   * Real machine memory size in words.
-   */
-  public static final int RM_MEMORY_SIZE = 1000;
 
   /**
-   * Temporary. Size 5 bytes.
-   */
-  public Word TMP = new Word("00000");
-  /**
-   * Page Table Register. Size 4 bytes.
+   * Current VM memory Page Table Register. Size 4 bytes. ToDo change to a reference to VM or PTR class.
    */
   public int[] PTR = new int[] { 0, 0, 0, 0 };
-  /**
-   * Instruction Counter. [0..999]. Size 3 bytes.
-   */
-  public int[] IC = new int[] { 0, 0, 0 };
-  /**
-   * Comparison result. Size 1 byte.
-   */
-  public Comparison C = Comparison.EQUAL;
   /**
    * Program Interrupt. Default value = null. Size 1 byte.
    */
@@ -97,16 +81,15 @@ public class RealMachine {
   /**
    * Processor mode. 1 byte.
    */
-  public Mode MODE = Mode.S;
+  public Mode MODE = Mode.U;
   /**
    * Busy channels. Bitmask [1..3]. 1 Byte.
    */
   public int BUSY = 0;
 
-  /**
-   * Memory in words. The size is determined by {@link #RM_MEMORY_SIZE}.
-   */
-  public final Word[] MEMORY = new Word[RM_MEMORY_SIZE];
+  public RealMachine(Memory memory) {
+    super(memory);
+  }
 
   /**
    * Check whether a channel has been marked as busy.
@@ -119,6 +102,36 @@ public class RealMachine {
     }
 
     return Utils.checkFlag(BUSY, i);
+  }
+
+  @Override
+  public void execute(Command command) throws UnhandledCommandException, MemoryOutOfBoundsException {
+    switch (command.type) {
+      case GD:
+        break;
+      case PD:
+        break;
+      case RD:
+        break;
+      case WD:
+        break;
+      case SD:
+        break;
+      case HALT:
+        break;
+      case GT:
+        break;
+      case PT:
+        break;
+      case STVM:
+        break;
+      case SVRG:
+        break;
+      case LDRG:
+        break;
+      default:
+        super.execute(command);
+    }
   }
 
 }

@@ -2,7 +2,7 @@ package test;
 
 import org.junit.Before;
 import org.junit.Test;
-import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
@@ -20,10 +20,10 @@ public class ExternalMemoryTest {
 
   private static final String PATH = "external_memory.txt";
 
-  @SuppressWarnings("ResultOfMethodCallIgnored")
   @Before
-  public void clearMemory() {
-    new File(PATH).delete();
+  public void clearMemory() throws FileNotFoundException {
+    // Truncate memory file
+    new PrintWriter(PATH).close();
   }
 
   @Test

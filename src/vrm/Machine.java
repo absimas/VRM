@@ -123,13 +123,13 @@ public abstract class Machine {
         final int tmp = TMP.toNumber();
         final int mem = memory.get(command.getArgument()).toNumber();
 
+        // Overflow (division by 0)
+        if (mem == 0) {
+          throw new NumberOverflowException(String.format("%d / %d. Division by zero!", tmp, mem));
+        }
+
         // Divide
         final int result = tmp / mem;
-
-        // Overflow // ToDo Unnecessary?
-        if (String.valueOf(result).length() > Word.LENGTH) {
-          throw new NumberOverflowException(String.format("%d / %d = %d which does not fit within a word!", tmp, mem, result));
-        }
 
         // Save the result in TMP
         TMP = new Word(Utils.precedeZeroes(result, Word.LENGTH));

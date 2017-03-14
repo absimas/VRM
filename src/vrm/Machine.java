@@ -30,7 +30,7 @@ public abstract class Machine {
   protected Machine(Memory memory) {
     this.memory = memory;
 
-    // Create an IC big enough to cover all the whole memory
+    // Create an IC big enough to cover all the memory
     IC = new int[String.valueOf(this.memory.size()).length()];
   }
 

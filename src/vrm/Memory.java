@@ -21,7 +21,7 @@ public class Memory implements Iterable<Word> {
    */
   public Memory(int size) {
     if (size <= 0) {
-      throw new IllegalStateException("Invalid memory size specified!");
+      throw new IllegalStateException("Negative memory size specified!");
     }
 
     words = new ArrayList<>(size);

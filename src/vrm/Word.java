@@ -24,7 +24,7 @@ public class Word {
    */
   public Word(String word) {
     if (word == null || word.length() != LENGTH) {
-      throw new IllegalArgumentException("Word must be of length 5. Got: " + word);
+      throw new IllegalArgumentException("Word must be of length " + LENGTH + ". Got: " + word);
     }
     this.symbols = word.toCharArray();
   }
@@ -42,7 +42,7 @@ public class Word {
    */
   public void replace(String word) {
     if (word == null || word.length() != LENGTH) {
-      throw new IllegalArgumentException("Word must be of length 5. Got: " + word);
+      throw new IllegalArgumentException("Word must be of length " + LENGTH + ". Got: " + word);
     }
 
     this.symbols = word.toCharArray();

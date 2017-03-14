@@ -109,11 +109,6 @@ public abstract class Machine {
         // Mod
         final int result = tmp % mem;
 
-        // Overflow // ToDo Unnecessary?
-        if (String.valueOf(result).length() > Word.LENGTH) {
-          throw new NumberOverflowException(String.format("%d %% %d = %d which does not fit within a word!", tmp, mem, result));
-        }
-
         // Save the result in TMP
         TMP = new Word(Utils.precedeZeroes(result, Word.LENGTH));
         break;

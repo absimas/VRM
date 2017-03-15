@@ -156,6 +156,7 @@ public class RealMachine extends Machine {
         externalMemory.setPointer(command.getArgument());
         break;
       case HALT:
+        // ToDo ?
         break;
       case GT:
         memory.replace(command.getArgument(), Utils.precedeZeroes(TI, Word.LENGTH));
@@ -165,10 +166,13 @@ public class RealMachine extends Machine {
         TI = memory.get(command.getArgument()).toNumber();
         break;
       case STVM:
+        // ToDo indexed VM array
         break;
       case SVRG:
+        // ToDo use a separate memory block when VM indexes are available
         break;
       case LDRG:
+        // ToDo use a separate memory block when VM indexes are available
         break;
       default:
         super.execute(command);

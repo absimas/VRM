@@ -45,4 +45,38 @@ public class VirtualMachine extends Machine {
     return String.format("VM%d", id);
   }
 
+  /**
+   * Save registers in the last block of this VM's memory.
+   * Registers are saved in the last block (word 91 and 92) of VM memory.
+   */
+  public void saveRegisters() {
+    // TMP as String
+    final String tmp = Utils.precedeZeroes(TMP.toString(), 5);
+    // IC as String
+    final String ic = String.format("%d%d", IC[0], IC[1]);
+    // C as String
+    final String c = String.valueOf(C.ordinal());
+    // Complete string
+    final String registers = String.format("%s%s%s00", tmp, ic, c);
+
+    // VM memory size is 10 blocks = 100 words
+    // Last block is where we save the registers
+    memory.replace(91, new Word(registers.substring(0, 5)));
+    memory.replace(92, new Word(registers.substring(5, 10)));
+  }
+
+  /**
+   * Restore registers from the last block of this VM's memory.
+   * Registers are saved in the last block (word 91 and 92) of VM memory.
+   */
+  public void restoreRegisters() {
+    // Complete string
+    final String registers = String.format("%s%s", memory.get(91).toString(), memory.get(92).toString());
+
+    TMP = new Word(registers.substring(0, 5));
+    IC[0] = Character.getNumericValue(registers.charAt(5));
+    IC[1] = Character.getNumericValue(registers.charAt(6));
+    C = Comparison.values()[Character.getNumericValue(registers.charAt(7))];
+  }
+
 }

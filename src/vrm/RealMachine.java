@@ -61,6 +61,11 @@ public class RealMachine extends Machine {
    * Default external memory path.
    */
   private static final String EXTERNAL_MEMORY_PATH = "external_memory.txt";
+  private static final int MAX_VM_COUNT = 5;
+  /**
+   * Size in words.
+   */
+  private static final int VM_MEMORY_SIZE = 100;
 
   /**
    * Current VM memory Page Table Register. Size 4 bytes. ToDo change to a reference to VM or PTR class.
@@ -94,6 +99,12 @@ public class RealMachine extends Machine {
   private final Keyboard keyboard = new Keyboard();
   private final Screen screen = new Screen();
   private final ExternalMemory externalMemory = new ExternalMemory(EXTERNAL_MEMORY_PATH);
+  private final VirtualMachine[] virtualMachines = new VirtualMachine[MAX_VM_COUNT];
+
+  /**
+   * {@link VirtualMachine} that's currently executing.
+   */
+  private VirtualMachine virtualMachine;
 
   public RealMachine(Memory memory) {
     super(memory);
@@ -126,7 +137,7 @@ public class RealMachine extends Machine {
         break;
       case PD:
         // Get 10 symbols (2 words) from memory
-        final Word[] output = { memory.get(command.getArgument()), memory.get(command.getArgument()+1) };
+        final Word[] output = {memory.get(command.getArgument()), memory.get(command.getArgument() + 1)};
 
         // Output to screen
         screen.write(output);
@@ -156,7 +167,7 @@ public class RealMachine extends Machine {
         externalMemory.setPointer(command.getArgument());
         break;
       case HALT:
-        // ToDo ?
+        // ToDo determine if halt came from a VM?
         break;
       case GT:
         memory.replace(command.getArgument(), Utils.precedeZeroes(TI, Word.LENGTH));
@@ -165,15 +176,62 @@ public class RealMachine extends Machine {
         // Set TI to equal to the number at the specified address
         TI = memory.get(command.getArgument()).toNumber();
         break;
-      case STVM:
-        // ToDo indexed VM array
+      case STVM: {
+        final int index = command.getArgument();
+        if (index >= MAX_VM_COUNT) {
+          throw new IllegalArgumentException(String.format("Index %d exceeds the maximum VM count!", index));
+        }
+
+        VirtualMachine vm = virtualMachines[index];
+
+        // 1. Restore VM registers
+        if (vm != null) {
+          vm.restoreRegisters();
+        }
+
+        // 2. Change MODE
+        MODE = Mode.U;
+
+        // 3. Reset timer
+        TI = DEFAULT_TIMER;
+
+        // 4. Start/Resume VM
+        if (vm == null) {
+          // 20 - interrupt table, 50 - page tables, VM_MEMORY_SIZE - memory for each VM
+          final int offset = 20 + 50 + index * VM_MEMORY_SIZE;
+          virtualMachines[index] = new VirtualMachine(this, memory.sublist(offset, offset + VM_MEMORY_SIZE));
+        }
+        virtualMachine = virtualMachines[index];
         break;
-      case SVRG:
-        // ToDo use a separate memory block when VM indexes are available
+      }
+      case SVRG: {
+        final int index = command.getArgument();
+        if (index >= MAX_VM_COUNT) {
+          throw new IllegalArgumentException(String.format("Index %d exceeds the maximum VM count!", index));
+        }
+
+        final VirtualMachine vm = virtualMachines[index];
+        if (vm == null) {
+          throw new IllegalArgumentException(String.format("VM with index %d was not yet created!", index));
+        }
+
+        vm.saveRegisters();
         break;
-      case LDRG:
-        // ToDo use a separate memory block when VM indexes are available
+      }
+      case LDRG: {
+        final int index = command.getArgument();
+        if (index >= MAX_VM_COUNT) {
+          throw new IllegalArgumentException(String.format("Index %d exceeds the maximum VM count!", index));
+        }
+
+        final VirtualMachine vm = virtualMachines[index];
+        if (vm == null) {
+          throw new IllegalArgumentException(String.format("VM with index %d was not yet created!", index));
+        }
+
+        vm.restoreRegisters();
         break;
+      }
       default:
         super.execute(command);
     }

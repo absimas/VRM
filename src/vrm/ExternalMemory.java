@@ -8,7 +8,7 @@ import java.io.RandomAccessFile;
 /**
  * External memory displaying output.
  */
-public class ExternalMemory {
+public class ExternalMemory implements Channel {
 
   /**
    * Size in blocks.

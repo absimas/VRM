@@ -1,17 +1,25 @@
 package vrm;
 
-import com.sun.istack.internal.Nullable;
-
 /**
  * Keyboard model. Used to read input.
  */
-public class Keyboard {
+public class Keyboard implements Channel {
 
-  public Word word;
+  /**
+   * Size in word count.
+   */
+  public static final int SIZE = 2;
 
-  @Nullable
-  public Word read() {
-    return word;
+  public final Word[] words = new Word[SIZE];
+
+  @Override
+  public Word[] read() {
+    return words;
+  }
+
+  @Override
+  public void write(Word[] words) {
+    throw new IllegalStateException("Cannot write to keyboard!");
   }
 
 }

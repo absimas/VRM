@@ -66,7 +66,52 @@ public class VRM {
     }
   }
 
-  private void execute(Command command) {
+  private void vmProgramExample() {
+    // Create a RM with a 100 word memory
+    final RealMachine rm = new RealMachine(new Memory(100));
+
+    // Create a VM
+    rm.execute(new Command(Command.Type.STVM, 0));
+    final VirtualMachine vm = rm.virtualMachine;
+
+    // Program of 10 words
+    final Memory program = new Memory(10);
+    program.replace(0, "PD013");
+    program.replace(1, "CR013");
+    program.replace(2, "AD012");
+    program.replace(3, "CP023");
+    program.replace(4, "JM024");
+    program.replace(5, "CM011");
+    program.replace(6, "CR013");
+    program.replace(7, "CR011");
+    program.replace(8, "CM013");
+    program.replace(9, "JP000");
+
+    // Loop each word in the program
+    for (Word word : program) {
+      // Convert word to a command
+      final Command command;
+      try {
+        command = Command.parse(word);
+      } catch (InvalidCommandException | InvalidArgumentsException e) {
+        e.printStackTrace();
+        // ToDo Interrupt
+        continue;
+      }
+
+      // Execute command
+      try {
+        // First try in a VM
+        vm.execute(command);
+      } catch (UnhandledCommandException e) {
+        e.printStackTrace();
+        // When VM fails to handle - execute in the RM
+        rm.execute(command);
+      }
+
+      // ToDo isInterrupted() to check RM interrupts
+    }
+
 
   }
 

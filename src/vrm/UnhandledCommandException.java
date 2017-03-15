@@ -5,7 +5,7 @@ import com.sun.istack.internal.NotNull;
 /**
  * Exception thrown a {@link Command} is unhandled.
  */
-public class UnhandledCommandException extends Exception {
+public class UnhandledCommandException extends RuntimeException {
 
   private final Command command;
 

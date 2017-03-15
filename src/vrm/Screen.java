@@ -1,12 +1,14 @@
 package vrm;
 
 /**
- * Screen for displaying output.
+ * Screen model. Used to display output.
  */
 public class Screen {
 
-  public void write(Word word) {
+  public Word word;
 
+  public void write(Word word) {
+    this.word = word;
   }
 
 }

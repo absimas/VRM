@@ -131,11 +131,29 @@ public class RealMachine extends Machine {
         // Output to screen
         screen.write(output);
         break;
-      case RD:
+      case RD: {
+        // Read words
+        final Word[] words = externalMemory.read();
+
+        // Save in memory
+        for (int i = 0; i < words.length; i++) {
+          memory.replace(command.getArgument() + i, words[i]);
+        }
         break;
-      case WD:
+      }
+      case WD: {
+        // Get 10 words from memory
+        final Word[] words = new Word[10];
+        for (int i = 0; i < 10; i++) {
+          words[i] = memory.get(command.getArgument() + i);
+        }
+
+        // Write words to external memory
+        externalMemory.write(words);
         break;
+      }
       case SD:
+        externalMemory.setPointer(command.getArgument());
         break;
       case HALT:
         break;

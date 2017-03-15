@@ -59,9 +59,18 @@ public class ExternalMemory implements Channel {
   /**
    * Reads 10 words starting with the location pointed by {@link #pointer}.
    * The pointer is not shifted afterwards!
-   * @throws IOException if errors occur while reading from external memory file
+   * @throws RuntimeException if errors occur while reading from external memory file
    */
-  public Word[] read() throws IOException {
+  public Word[] read() throws RuntimeException {
+    try {
+      return readInternal();
+    } catch (IOException e) {
+      e.printStackTrace();
+      throw new RuntimeException(e);
+    }
+  }
+
+  private Word[] readInternal() throws IOException {
     // Seek to pointed position
     raf.seek(pointer * LINE_SIZE);
 
@@ -86,9 +95,18 @@ public class ExternalMemory implements Channel {
   /**
    * Writes 10 words starting with the location pointed by {@link #pointer}.
    * The pointer is not shifted afterwards!
-   * @throws IOException if errors occur while writing to external memory file
+   * @throws RuntimeException if errors occur while writing to external memory file
    */
-  public void write(@NotNull Word[] words) throws IOException {
+  public void write(@NotNull Word[] words) throws RuntimeException {
+    try {
+      writeInternal(words);
+    } catch (IOException e) {
+      e.printStackTrace();
+      throw new RuntimeException(e);
+    }
+  }
+
+  private void writeInternal(@NotNull Word[] words) throws IOException {
     // Ensure we've the correct amount of words
     if (words.length < WORD_IO) {
       throw new IllegalStateException("Not enough words provided for an output!");

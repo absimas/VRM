@@ -57,6 +57,10 @@ public class RealMachine extends Machine {
    * Default timer value. [0..99].
    */
   public static final int DEFAULT_TIMER = 10;
+  /**
+   * Default external memory path.
+   */
+  private static final String EXTERNAL_MEMORY_PATH = "external_memory.txt";
 
   /**
    * Current VM memory Page Table Register. Size 4 bytes. ToDo change to a reference to VM or PTR class.
@@ -87,6 +91,10 @@ public class RealMachine extends Machine {
    */
   public int BUSY = 0;
 
+  private final Keyboard keyboard = new Keyboard();
+  private final Screen screen = new Screen();
+  private final ExternalMemory externalMemory = new ExternalMemory(EXTERNAL_MEMORY_PATH);
+
   public RealMachine(Memory memory) {
     super(memory);
   }
@@ -108,8 +116,20 @@ public class RealMachine extends Machine {
   public void execute(Command command) throws UnhandledCommandException, MemoryOutOfBoundsException {
     switch (command.type) {
       case GD:
+        // Read symbols from keyboard
+        final Word[] input = keyboard.read();
+
+        // Save in memory
+        for (int i = 0; i < input.length; i++) {
+          memory.replace(command.getArgument() + i, input[i]);
+        }
         break;
       case PD:
+        // Get 10 symbols (2 words) from memory
+        final Word[] output = { memory.get(command.getArgument()), memory.get(command.getArgument()+1) };
+
+        // Output to screen
+        screen.write(output);
         break;
       case RD:
         break;

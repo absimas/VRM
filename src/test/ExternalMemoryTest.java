@@ -16,7 +16,7 @@ import static org.junit.Assert.*;
  */
 public class ExternalMemoryTest {
 
-  private static final String PATH = "external_memory.txt";
+  private static final String PATH = "external_memory_test.txt";
 
   @Before
   public void clearMemory() throws FileNotFoundException {

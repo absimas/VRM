@@ -53,3 +53,6 @@ fabric.properties
 # *.ipr
 
 # End of https://www.gitignore.io/api/jetbrains
+
+### VRM ###
+external_memory_test.txt

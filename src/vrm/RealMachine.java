@@ -158,8 +158,11 @@ public class RealMachine extends Machine {
       case HALT:
         break;
       case GT:
+        memory.replace(command.getArgument(), Utils.precedeZeroes(TI, Word.LENGTH));
         break;
       case PT:
+        // Set TI to equal to the number at the specified address
+        TI = memory.get(command.getArgument()).toNumber();
         break;
       case STVM:
         break;

@@ -127,6 +127,7 @@ public class RealMachine extends Machine {
   public void execute(Command command) throws UnhandledCommandException, MemoryOutOfBoundsException {
     switch (command.type) {
       case GD:
+        // ToDo upd BUSY
         // Read symbols from keyboard
         final Word[] input = keyboard.read();
 
@@ -136,6 +137,7 @@ public class RealMachine extends Machine {
         }
         break;
       case PD:
+        // ToDo upd BUSY
         // Get 10 symbols (2 words) from memory
         final Word[] output = {memory.get(command.getArgument()), memory.get(command.getArgument() + 1)};
 
@@ -143,6 +145,7 @@ public class RealMachine extends Machine {
         screen.write(output);
         break;
       case RD: {
+        // ToDo upd BUSY
         // Read words
         final Word[] words = externalMemory.read();
 
@@ -153,6 +156,7 @@ public class RealMachine extends Machine {
         break;
       }
       case WD: {
+        // ToDo upd BUSY
         // Get 10 words from memory
         final Word[] words = new Word[10];
         for (int i = 0; i < 10; i++) {
@@ -164,6 +168,7 @@ public class RealMachine extends Machine {
         break;
       }
       case SD:
+        // ToDo upd BUSY
         externalMemory.setPointer(command.getArgument());
         break;
       case HALT:

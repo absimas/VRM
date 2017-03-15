@@ -104,7 +104,7 @@ public class RealMachine extends Machine {
   /**
    * {@link VirtualMachine} that's currently executing.
    */
-  private VirtualMachine virtualMachine;
+  public VirtualMachine virtualMachine;
 
   public RealMachine(Memory memory) {
     super(memory);
@@ -167,7 +167,7 @@ public class RealMachine extends Machine {
         externalMemory.setPointer(command.getArgument());
         break;
       case HALT:
-        // ToDo determine if halt came from a VM?
+        System.exit(1); // ToDo does this work with GUI apps?
         break;
       case GT:
         memory.replace(command.getArgument(), Utils.precedeZeroes(TI, Word.LENGTH));
@@ -234,6 +234,22 @@ public class RealMachine extends Machine {
       }
       default:
         super.execute(command);
+    }
+  }
+
+  /**
+   * Used to halt a VM from being tracked by this RM.
+   */
+  public void haltVM(VirtualMachine vm) {
+    // Remove from VM list
+    for (int i = 0; i < virtualMachines.length; i++) {
+      if (virtualMachines[i] == vm) {
+        virtualMachines[i] = null;
+      }
+    }
+    // Remove if it's the current VM
+    if (virtualMachine == vm) {
+      virtualMachine = null;
     }
   }
 

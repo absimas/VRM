@@ -135,8 +135,18 @@ public abstract class Machine {
         break;
       }
       case CP:
-        // ToDo what to compare? Char arrays / numbers / number representations?
-          // e.g. "123" > "abc"
+        // Convert
+        final String tmp = TMP.toString();
+        final String mem = memory.get(command.getArgument()).toString();
+
+        final int c = tmp.compareTo(mem);
+        if (c == 0) {
+          C = Comparison.EQUAL;
+        } else if (c > 0) {
+          C = Comparison.MORE;
+        } else {
+          C = Comparison.LESS;
+        }
         break;
       case JP: {
         String ic = String.valueOf(command.getArgument());

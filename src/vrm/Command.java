@@ -27,9 +27,9 @@ public class Command {
   /**
    * Command arguments. Number calculation formula: x * 100 + y * 10 + z.
    *
-   * <br>{@code null} = unused argument
+   * <br>{@code 0} = unused argument
    */
-  public final Integer x, y, z;
+  public final int x, y, z;
 
   public Command(@NotNull Type type, @Nullable int... args) {
     this.type = type;
@@ -42,21 +42,21 @@ public class Command {
 
     // No args
     if (argCount == 0) {
-      x = y = z = null;
+      x = y = z = 0;
       return;
     }
 
     // First arg
     this.x = args[0];
     if (argCount == 1) {
-      y = z = null;
+      y = z = 0;
       return;
     }
 
     // Second arg
     this.y = args[1];
     if (argCount == 2) {
-      z = null;
+      z = 0;
       return;
     }
 

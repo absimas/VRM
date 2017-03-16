@@ -6,29 +6,34 @@ import vrm.exceptions.InvalidCommandException;
 /**
  * Created by Simas on 2017 Mar 04.
  */
+@SuppressWarnings("UnnecessaryLocalVariable")
 public class VRM {
-
-  /**
-   * VM memory size in words.
-   */
-  public static final int VM_MEMORY_SIZE = 100;
-  /**
-   * RM memory size in words.
-   */
-  public static final int RM_MEMORY_SIZE = 1000;
 
   public static void main(String[] args) {
 
   }
 
-  private void machineExample() {
-    final RealMachine rm = new RealMachine(new Memory(RM_MEMORY_SIZE));
+  private void vmCreationExample() {
+    final RealMachine rm = new RealMachine(new Memory(RealMachine.MEMORY_SIZE));
 
     // Create 3 VMs that use independent memory blocks of the RM
     // Created VMs will have memories: [0..9], [10..19], [20..29]
     for (int i = 0; i < 3; i++) {
-      final Memory memory = rm.memory.sublist(i * VM_MEMORY_SIZE, VM_MEMORY_SIZE);
-      final VirtualMachine vm1 = new VirtualMachine(rm, memory);
+      // Allocate VM memory
+      final int vmMemoryOffset = i * RealMachine.VM_MEMORY_SIZE;
+      final Memory vmMemory = rm.memory.sublist(vmMemoryOffset, vmMemoryOffset + RealMachine.VM_MEMORY_SIZE);
+
+      // Create and save VM page table
+      final int vmPageTableOffset = RealMachine.INTERRUPT_TABLE_SIZE + i * RealMachine.VM_MEMORY_SIZE / 10;
+      final PageTable vmPageTable = new PageTable(Utils.generateRange(vmMemoryOffset, vmMemoryOffset + RealMachine.VM_MEMORY_SIZE));
+      rm.memory.replace(vmPageTableOffset, vmPageTable.table);
+
+      // Create VM
+      final VirtualMachine vm = new VirtualMachine(rm, vmMemory);
+
+      // Reference newly created VM as the current one
+      rm.virtualMachine = vm;
+      rm.PTR = vmPageTableOffset;
     }
   }
 

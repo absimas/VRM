@@ -1,5 +1,7 @@
 package vrm;
 
+import java.util.stream.IntStream;
+
 import vrm.exceptions.MemoryOutOfBoundsException;
 import vrm.exceptions.UnhandledCommandException;
 
@@ -68,12 +70,24 @@ public class RealMachine extends Machine {
   /**
    * Size in words.
    */
-  private static final int VM_MEMORY_SIZE = 100;
+  public static final int VM_MEMORY_SIZE = 100;
+  /**
+   * Max VM page table size in words.
+   */
+  public static final int VM_PAGE_TABLES_SIZE = MAX_VM_COUNT * VM_MEMORY_SIZE / 10;
+  /**
+   * Size in words.
+   */
+  public static final int INTERRUPT_TABLE_SIZE = 20;
+  /**
+   * RM memory size in words.
+   */
+  public static final int MEMORY_SIZE = 1000;
 
   /**
-   * Current VM memory Page Table Register. Size 4 bytes. ToDo change to a reference to VM or PTR class.
+   * Current VM memory Page Table Register's address. Size 3 bytes.
    */
-  public int[] PTR = new int[] { 0, 0, 0, 0 };
+  public int PTR;
   /**
    * Program Interrupt. Default value = null. Size 1 byte.
    */
@@ -254,13 +268,28 @@ public class RealMachine extends Machine {
         // 3. Reset timer
         TI = DEFAULT_TIMER;
 
+        // Calculate offset for VM page table
+        final int vmPageTableOffset = INTERRUPT_TABLE_SIZE + index * VM_MEMORY_SIZE / 10;
+
         // 4. Start/Resume VM
         if (vm == null) {
-          // 20 - interrupt table, 50 - page tables, VM_MEMORY_SIZE - memory for each VM
-          final int offset = 20 + 50 + index * VM_MEMORY_SIZE;
-          virtualMachines[index] = new VirtualMachine(this, memory.sublist(offset, offset + VM_MEMORY_SIZE));
+          // Calculate offset for VM memory
+          final int vmMemoryOffset = INTERRUPT_TABLE_SIZE + VM_PAGE_TABLES_SIZE + index * VM_MEMORY_SIZE;
+
+          // Allocate VM memory
+          final Memory vmMemory = memory.sublist(vmMemoryOffset, vmMemoryOffset + VM_MEMORY_SIZE);
+
+          // Generate a page table for this memory
+          final PageTable vmPageTable = new PageTable(Utils.generateRange(vmMemoryOffset, vmMemoryOffset + VM_MEMORY_SIZE));
+          // Save page table
+          memory.replace(vmPageTableOffset, vmPageTable.table);
+
+          // Create VM
+          virtualMachines[index] = new VirtualMachine(this, vmMemory);
         }
+        // Reference newly created/resumed VM as the current one
         virtualMachine = virtualMachines[index];
+        PTR = vmPageTableOffset;
         break;
       }
       case SVRG: {

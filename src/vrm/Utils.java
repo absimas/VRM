@@ -1,5 +1,7 @@
 package vrm;
 
+import java.util.stream.IntStream;
+
 /**
  * Created by Simas on 2017 Mar 04.
  */
@@ -43,6 +45,13 @@ public class Utils {
    */
   public static String precedeZeroes(int integer, int size) {
     return precedeZeroes(String.valueOf(integer), size);
+  }
+
+  /**
+   * Generate a range of ints.
+   */
+  public static int[] generateRange(int startInclusive, int endExclusive) {
+    return IntStream.range(startInclusive, endExclusive).toArray();
   }
 
 }

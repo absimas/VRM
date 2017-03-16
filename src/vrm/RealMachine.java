@@ -1,8 +1,5 @@
 package vrm;
 
-import java.util.Arrays;
-import java.util.stream.IntStream;
-
 import vrm.exceptions.MemoryOutOfBoundsException;
 import vrm.exceptions.UnhandledCommandException;
 
@@ -84,6 +81,10 @@ public class RealMachine extends Machine {
    * RM memory size in words.
    */
   public static final int MEMORY_SIZE = 1000;
+  /**
+   * Counter for instantiated RMs.
+   */
+  private static int RM_IDS = 0;
 
   /**
    * Current VM memory Page Table Register's address. Size 3 bytes.
@@ -118,6 +119,10 @@ public class RealMachine extends Machine {
   private final Screen screen = new Screen();
   private final ExternalMemory externalMemory = new ExternalMemory(EXTERNAL_MEMORY_PATH);
   private final VirtualMachine[] virtualMachines = new VirtualMachine[MAX_VM_COUNT];
+  /**
+   * Unique id for this RM instance.
+   */
+  private final int id = RM_IDS++;
 
   /**
    * {@link VirtualMachine} that's currently executing.
@@ -382,6 +387,11 @@ public class RealMachine extends Machine {
    */
   private PageTable getPageTable(int address) {
     return new PageTable(memory.get(address, RealMachine.VM_MEMORY_SIZE / 10));
+  }
+
+  @Override
+  public String toString() {
+    return String.format("VM%d", id);
   }
 
 }

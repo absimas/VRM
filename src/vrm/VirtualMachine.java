@@ -26,6 +26,12 @@ public class VirtualMachine extends Machine {
 
   @Override
   public void execute(Command command) throws UnhandledCommandException, MemoryOutOfBoundsException {
+    // Commands executed in a VM must have an x argument of 0
+    if (command.x != 0) {
+      realMachine.PI = RealMachine.ProgramInterrupt.INV_ADDRESS;
+      return;
+    }
+
     switch (command.type) {
       case HALT:
         realMachine.SI = RealMachine.SuperInterrupt.HALT;

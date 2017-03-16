@@ -94,22 +94,49 @@ public class VRM {
       try {
         command = Command.parse(word);
       } catch (InvalidCommandException | InvalidArgumentsException e) {
+        // Parsing the command failed
         e.printStackTrace();
-        // ToDo Interrupt
+
+        // Mark error
+//        rm.PI = RealMachine.ProgramInterrupt.INV_OP;
+
+        // Clear PI
+//        rm.PI = null;
+
+        // ToDo run program interrupt program
         continue;
       }
 
-      // Execute command
-      try {
-        // First try in a VM
-        vm.execute(command);
-      } catch (UnhandledCommandException e) {
-        e.printStackTrace();
-        // When VM fails to handle - execute in the RM
-        rm.execute(command);
-      }
+      // Execute command in a VM
+      vm.execute(command);
 
-      // ToDo isInterrupted() to check RM interrupts
+      if (rm.SI != null) {
+        // An unprivileged interruption
+        // Clear SI
+        rm.SI = null;
+
+        // Execute the command in the RM
+        rm.execute(command);
+      } else if (rm.PI != null) {
+        // Command execution failed
+        // Clear PI
+        rm.PI = null;
+
+        // ToDo run program interrupt program
+      } else if (rm.TI <= 0) {
+        // Timer too low
+
+        // ToDo run timer interrupt program
+
+        // Reset timer
+        rm.TI = RealMachine.DEFAULT_TIMER;
+      } else if (rm.IOI > 0) {
+        // I/O interruption
+        // Clear IOI
+        rm.IOI = 0;
+
+        // ToDo I/O interrupt program
+      }
     }
 
 

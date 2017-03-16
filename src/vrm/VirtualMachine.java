@@ -28,10 +28,26 @@ public class VirtualMachine extends Machine {
   public void execute(Command command) throws UnhandledCommandException, MemoryOutOfBoundsException {
     switch (command.type) {
       case HALT:
-        realMachine.haltVM(this);
-        throw new UnhandledCommandException(command, String.format("Command %s wasn't handled in %s.", command, this));
-      // Commands that require super privileges - throw // ToDo note that the command arguments wll need to be converted using PLR
-      case GD: case PD: case RD: case WD: case SD: case GT: case PT: case STVM: case SVRG: case LDRG:
+        realMachine.SI = RealMachine.SuperInterrupt.HALT;
+        break;
+      // ToDo note that the command arguments need to be converted using PLR
+      case GD:
+        realMachine.SI = RealMachine.SuperInterrupt.GD;
+        break;
+      case PD:
+        realMachine.SI = RealMachine.SuperInterrupt.PD;
+        break;
+      case RD:
+        realMachine.SI = RealMachine.SuperInterrupt.RD;
+        break;
+      case WD:
+        realMachine.SI = RealMachine.SuperInterrupt.WD;
+        break;
+      case SD:
+        realMachine.SI = RealMachine.SuperInterrupt.SD;
+        break;
+      // The following commands lead to a VM modification but cannot be executed internally.
+      case STVM: case SVRG: case LDRG:
         throw new UnhandledCommandException(command, String.format("Command %s wasn't handled in %s.", command, this));
       // Other commands invoke the default handling
       default:

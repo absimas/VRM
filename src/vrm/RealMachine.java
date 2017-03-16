@@ -207,13 +207,6 @@ public class RealMachine extends Machine {
       case HALT:
         System.exit(1); // ToDo does this work with GUI apps?
         break;
-      case GT:
-        memory.replace(command.getArgument(), Utils.precedeZeroes(TI, Word.LENGTH));
-        break;
-      case PT:
-        // Set TI to equal to the number at the specified address
-        TI = memory.get(command.getArgument()).toNumber();
-        break;
       case STVM: {
         final int index = command.getArgument();
         if (index >= MAX_VM_COUNT) {
@@ -273,6 +266,15 @@ public class RealMachine extends Machine {
       default:
         super.execute(command);
     }
+  }
+
+  /**
+   * Check interruption registers whether an interruption has occurred.
+   */
+  public boolean isInterrupted() {
+    final int pi = (PI == null ? 0 : PI.ordinal() + 1);
+    final int si = (SI == null ? 0 : SI.ordinal() + 1);
+    return pi + si + IOI > 0 || TI == 0;
   }
 
   /**

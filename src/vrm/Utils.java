@@ -37,14 +37,16 @@ public class Utils {
    * @return string preceded with zeroes to meet the wanted size.
    */
   public static String precedeZeroes(String string, int size) {
-    return ("0000000000" + string).substring(size);
+    string = "00000000000000" + string;
+    return string.substring(string.length()-size);
   }
 
   /**
    * @see #precedeZeroes(String, int)
    */
   public static String precedeZeroes(int integer, int size) {
-    return precedeZeroes(String.valueOf(integer), size);
+    final String result = precedeZeroes(String.valueOf(integer), size);
+    return result;
   }
 
   /**

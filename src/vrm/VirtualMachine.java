@@ -29,6 +29,7 @@ public class VirtualMachine extends Machine {
 
   @Override
   public void execute(Command command) throws UnhandledCommandException, MemoryOutOfBoundsException, InterruptedException {
+    System.out.println("command = [" + command + "] from " + this);
     // Commands executed in a VM must have an x argument of 0
     if (command.x != 0) {
       realMachine.PI = RealMachine.ProgramInterrupt.INV_ADDRESS;
@@ -39,7 +40,6 @@ public class VirtualMachine extends Machine {
       case HALT:
         realMachine.SI = RealMachine.SuperInterrupt.HALT;
         break;
-      // ToDo note that the command arguments need to be converted using PLR
       case GD:
         realMachine.SI = RealMachine.SuperInterrupt.GD;
         break;

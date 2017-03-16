@@ -9,8 +9,8 @@ import vrm.exceptions.InvalidCommandException;
 @SuppressWarnings("UnnecessaryLocalVariable")
 public class VRM {
 
-  public static void main(String[] args) {
-
+  public static void main(String[] args) throws InterruptedException {
+    new VRM().vmProgramExample();
   }
 
   private void vmCreationExample() {
@@ -73,7 +73,7 @@ public class VRM {
 
   private void vmProgramExample() throws InterruptedException {
     // Create a RM with a 100 word memory
-    final RealMachine rm = new RealMachine(new Memory(100));
+    final RealMachine rm = new RealMachine(new Memory(RealMachine.MEMORY_SIZE));
 
     // Create a VM
     rm.execute(new Command(Command.Type.STVM, 0));
@@ -102,7 +102,7 @@ public class VRM {
         // Parsing the command failed
         e.printStackTrace();
 
-        // Mark error
+        // Set PI
 //        rm.PI = RealMachine.ProgramInterrupt.INV_OP;
 
         // Clear PI
@@ -120,8 +120,17 @@ public class VRM {
         // Clear SI
         rm.SI = null;
 
+        // Get an absolute address
+        final String absolute = Utils.precedeZeroes(rm.getAbsoluteAddress(command.getArgument()), 3);
+
+        // Create a modified command
+        final Command cmd = new Command(command.type,
+            Character.getNumericValue(absolute.charAt(0)),
+            Character.getNumericValue(absolute.charAt(1)),
+            Character.getNumericValue(absolute.charAt(2)));
+
         // Execute the command in the RM
-        rm.execute(command);
+        rm.execute(cmd);
       } else if (rm.PI != null) {
         // Command execution failed
         // Clear PI

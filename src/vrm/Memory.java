@@ -58,6 +58,18 @@ public class Memory implements Iterable<Word> {
   }
 
   /**
+   * Fetches a specified amount of words from the given index (inclusive).
+   * @throws MemoryOutOfBoundsException when referring to a word outside the given memory block
+   */
+  public Word[] get(int start, int count) throws MemoryOutOfBoundsException {
+    try {
+      return words.subList(start, start+count).toArray(new Word[0]);
+    } catch (IndexOutOfBoundsException ignored) {
+      throw new MemoryOutOfBoundsException(ignored);
+    }
+  }
+
+  /**
    * Convenience method to access and replace a specific word.
    * @param index  word index
    * @param word   replacement

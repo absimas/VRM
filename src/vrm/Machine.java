@@ -47,6 +47,7 @@ public abstract class Machine {
    * @throws NumberOverflowException when number arithmetic result does not fit in a word
    */
   public void execute(Command command) throws UnhandledCommandException, MemoryOutOfBoundsException, NumberFormatException, NumberOverflowException, InterruptedException {
+    System.out.println("command = [" + command + "] from " + this);
     switch (command.type) {
       case CR:
         TMP = memory.get(command.getArgument());

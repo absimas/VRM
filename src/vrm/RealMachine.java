@@ -1,5 +1,6 @@
 package vrm;
 
+import java.util.Arrays;
 import java.util.stream.IntStream;
 
 import vrm.exceptions.MemoryOutOfBoundsException;
@@ -150,6 +151,7 @@ public class RealMachine extends Machine {
 
   @Override
   public void execute(Command command) throws UnhandledCommandException, MemoryOutOfBoundsException, InterruptedException {
+    System.out.println("command = [" + command + "] from " + this);
     switch (command.type) {
       case GD:
         // Block until keyboard is free
@@ -348,6 +350,38 @@ public class RealMachine extends Machine {
     if (virtualMachine == vm) {
       virtualMachine = null;
     }
+  }
+
+  /**
+   * Convert the given relative address to an absolute one. Current VMs page table will be used for conversion.
+   */
+  public int getAbsoluteAddress(int relativeAddress) {
+    return getAbsoluteAddress(getPageTable(PTR), relativeAddress);
+  }
+
+  /**
+   * Convert a relative address to an absolute one using a specific page table.
+   * @param pageTable       page table
+   * @param relativeAddress address relative to the given VM
+   * @return absolute (RM) address
+   */
+  private int getAbsoluteAddress(PageTable pageTable, int relativeAddress) {
+    // Determine what VM block the address is pointing to
+    final int vmMemoryBlock = relativeAddress / 10;
+
+    // Calculate address offset from the beginning of that block
+    final int addressOffset = relativeAddress - vmMemoryBlock;
+
+    // Determine absolute address for the given relative address
+    return pageTable.table[vmMemoryBlock].toNumber() + addressOffset;
+  }
+
+  /**
+   * Gets VM page table at the specified address.
+   * @param address page table address
+   */
+  private PageTable getPageTable(int address) {
+    return new PageTable(memory.get(address, RealMachine.VM_MEMORY_SIZE / 10));
   }
 
 }

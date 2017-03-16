@@ -46,28 +46,29 @@ public class ExternalMemoryTest {
     mem.close();
 
     // See if content written correctly
-    final String expected = "AD000 AD001 AD002 AD003 AD004 AD005 AD006 AD007 AD008 AD009\n" +
+    final String expectedStart = "AD000 AD001 AD002 AD003 AD004 AD005 AD006 AD007 AD008 AD009\n" +
                             "DV000 DV001 DV002 DV003 DV004 DV005 DV006 DV007 DV008 DV009\n";
+
     final String actual = new String(Files.readAllBytes(Paths.get(PATH)));
 
-    assertEquals(expected, actual);
+    assertEquals(actual.startsWith(expectedStart), true);
   }
 
   @Test
   public void writeToMiddle() throws IOException {
-    // Initialize memory
+    // Open external mem object
+    final ExternalMemory mem = new ExternalMemory(PATH);
+    final Word[] words = new Word[10];
+
+    // Re-Initialize memory
     final String initial = "AD000 AD001 AD002 AD003 AD004 AD005 AD006 AD007 AD008 AD009\n" +
-                            "DV000 DV001 DV002 DV003 DV004 DV005 DV006 DV007 DV008 DV009\n" +
-                            "MD000 MD001 MD002 MD003 MD004 MD005 MD006 MD007 MD008 MD009\n" +
-                            "SB000 SB001 SB002 SB003 SB004 SB005 SB006 SB007 SB008 SB009\n";
+        "DV000 DV001 DV002 DV003 DV004 DV005 DV006 DV007 DV008 DV009\n" +
+        "MD000 MD001 MD002 MD003 MD004 MD005 MD006 MD007 MD008 MD009\n" +
+        "SB000 SB001 SB002 SB003 SB004 SB005 SB006 SB007 SB008 SB009\n";
     final PrintWriter writer = new PrintWriter(PATH);
     writer.write(initial);
     writer.flush();
     writer.close();
-
-    // Open external mem object
-    final ExternalMemory mem = new ExternalMemory(PATH);
-    final Word[] words = new Word[10];
 
     // Overwrite to the 3rd line (words 21-30)
     mem.setPointer(2);
@@ -91,7 +92,10 @@ public class ExternalMemoryTest {
 
   @Test
   public void read() throws IOException {
-    // Initialize memory
+    // Open external mem object
+    final ExternalMemory mem = new ExternalMemory(PATH);
+
+    // Re-Initialize memory
     final String initial = "AD000 AD001 AD002 AD003 AD004 AD005 AD006 AD007 AD008 AD009\n" +
         "DV000 DV001 DV002 DV003 DV004 DV005 DV006 DV007 DV008 DV009\n" +
         "MD000 MD001 MD002 MD003 MD004 MD005 MD006 MD007 MD008 MD009\n" +
@@ -100,9 +104,6 @@ public class ExternalMemoryTest {
     writer.write(initial);
     writer.flush();
     writer.close();
-
-    // Open external mem object
-    final ExternalMemory mem = new ExternalMemory(PATH);
 
     String actual = "";
 
@@ -123,7 +124,10 @@ public class ExternalMemoryTest {
 
   @Test
   public void readFromMiddle() throws IOException {
-    // Initialize memory
+    // Open external mem object
+    final ExternalMemory mem = new ExternalMemory(PATH);
+
+    // Re-Initialize memory
     final String initial = "AD000 AD001 AD002 AD003 AD004 AD005 AD006 AD007 AD008 AD009\n" +
         "DV000 DV001 DV002 DV003 DV004 DV005 DV006 DV007 DV008 DV009\n" +
         "MD000 MD001 MD002 MD003 MD004 MD005 MD006 MD007 MD008 MD009\n" +
@@ -132,9 +136,6 @@ public class ExternalMemoryTest {
     writer.write(initial);
     writer.flush();
     writer.close();
-
-    // Open external mem object
-    final ExternalMemory mem = new ExternalMemory(PATH);
 
       // Read a line as an array of words
     mem.setPointer(2);
@@ -145,6 +146,23 @@ public class ExternalMemoryTest {
 
     // Compare
     final String expected = "MD000 MD001 MD002 MD003 MD004 MD005 MD006 MD007 MD008 MD009\n";
+    assertEquals(expected, actual);
+  }
+
+  @Test
+  public void initializeTest() {
+    // Open external mem object
+    final ExternalMemory mem = new ExternalMemory(PATH);
+
+    // Read middle line as an array of words
+//    mem.setPointer(1);
+    final Word[] words = mem.read();
+
+    // Combine words into final string
+    final String actual = lineToString(words);
+
+    // Compare
+    final String expected = "00000 00000 00000 00000 00000 00000 00000 00000 00000 00000\n";
     assertEquals(expected, actual);
   }
 

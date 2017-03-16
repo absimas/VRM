@@ -22,6 +22,10 @@ public class ExternalMemory implements Channel {
    * Line size is equal to {@link #WORD_IO} words with 9 spaces and a newline.
    */
   private static final int LINE_SIZE = Word.LENGTH * WORD_IO + 9 + 1;
+  /**
+   * Initially all external memory words will be filled with these characters.
+   */
+  private static final char FILLER = '0';
 
   /**
    * External memory raf.
@@ -37,10 +41,38 @@ public class ExternalMemory implements Channel {
   public ExternalMemory(String path) {
     try {
       raf = new RandomAccessFile(path, "rwd");
+      initialize();
     } catch (FileNotFoundException e) {
       e.printStackTrace();
       throw new IllegalStateException(String.format("External memory file (%s) missing and couldn't be created!", path));
     }
+  }
+
+  /**
+   * Initializes external memory file with {@link #FILLER}.
+   */
+  private void initialize() {
+    // Create initial word
+    String string = "";
+    for (int i = 0; i < Word.LENGTH; i++) {
+      string += FILLER;
+    }
+    final Word word = new Word(string);
+
+    // Combine 10 words (note reference is the same!)
+    final Word[] words = new Word[WORD_IO];
+    for (int i = 0; i < WORD_IO; i++) {
+      words[i] = word;
+    }
+
+    // Write 100 times incrementing pointer each time (note reference is the same!)
+    for (int i = 0; i < Math.ceil(SIZE / WORD_IO); i++) {
+      write(words);
+      setPointer(getPointer() + 1);
+    }
+
+    // Reset pointer
+    setPointer(0);
   }
 
   public int getPointer() {
@@ -118,8 +150,8 @@ public class ExternalMemory implements Channel {
     // Convert words to bytes
     final byte[] bytes = new byte[LINE_SIZE];
     int offset = 0;
-    for (Word word : words) {
-      final byte[] wordBytes = String.format("%s ", word.toString()).getBytes();
+    for (int i = 0; i < WORD_IO; i++) {
+      final byte[] wordBytes = String.format("%s ", words[i].toString()).getBytes();
 
       System.arraycopy(wordBytes, 0, bytes, offset, wordBytes.length);
 

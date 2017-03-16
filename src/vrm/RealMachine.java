@@ -123,11 +123,21 @@ public class RealMachine extends Machine {
     return Utils.checkFlag(BUSY, i);
   }
 
+  private void setChannelBusy(int i, boolean busy) {
+    if (busy) {
+      BUSY = Utils.setFlag(BUSY, i);
+    } else {
+      BUSY = Utils.clearFlag(BUSY, i);
+    }
+  }
+
   @Override
   public void execute(Command command) throws UnhandledCommandException, MemoryOutOfBoundsException {
     switch (command.type) {
       case GD:
-        // ToDo upd BUSY
+        // Block keyboard channel
+        setChannelBusy(keyboard.getIndex(), true);
+
         // Read symbols from keyboard
         final Word[] input = keyboard.read();
 
@@ -135,17 +145,27 @@ public class RealMachine extends Machine {
         for (int i = 0; i < input.length; i++) {
           memory.replace(command.getArgument() + i, input[i]);
         }
+
+        // Unblock keyboard channel
+        setChannelBusy(keyboard.getIndex(), false);
         break;
       case PD:
-        // ToDo upd BUSY
+        // Block screen channel
+        setChannelBusy(screen.getIndex(), true);
+
         // Get 10 symbols (2 words) from memory
         final Word[] output = {memory.get(command.getArgument()), memory.get(command.getArgument() + 1)};
 
         // Output to screen
         screen.write(output);
+
+        // Unblock keyboard channel
+        setChannelBusy(screen.getIndex(), false);
         break;
       case RD: {
-        // ToDo upd BUSY
+        // Block external memory channel
+        setChannelBusy(externalMemory.getIndex(), true);
+
         // Read words
         final Word[] words = externalMemory.read();
 
@@ -153,10 +173,15 @@ public class RealMachine extends Machine {
         for (int i = 0; i < words.length; i++) {
           memory.replace(command.getArgument() + i, words[i]);
         }
+
+        // Unblock external memory channel
+        setChannelBusy(externalMemory.getIndex(), false);
         break;
       }
       case WD: {
-        // ToDo upd BUSY
+        // Block external memory channel
+        setChannelBusy(externalMemory.getIndex(), true);
+
         // Get 10 words from memory
         final Word[] words = new Word[10];
         for (int i = 0; i < 10; i++) {
@@ -165,11 +190,19 @@ public class RealMachine extends Machine {
 
         // Write words to external memory
         externalMemory.write(words);
+
+        // Unblock external memory channel
+        setChannelBusy(externalMemory.getIndex(), true);
         break;
       }
       case SD:
-        // ToDo upd BUSY
+        // Block external memory channel
+        setChannelBusy(externalMemory.getIndex(), true);
+
         externalMemory.setPointer(command.getArgument());
+
+        // Unblock external memory channel
+        setChannelBusy(externalMemory.getIndex(), false);
         break;
       case HALT:
         System.exit(1); // ToDo does this work with GUI apps?

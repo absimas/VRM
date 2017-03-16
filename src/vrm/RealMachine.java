@@ -1,5 +1,8 @@
 package vrm;
 
+import vrm.exceptions.MemoryOutOfBoundsException;
+import vrm.exceptions.UnhandledCommandException;
+
 /**
  * Created by Simas on 2017 Mar 04.
  */

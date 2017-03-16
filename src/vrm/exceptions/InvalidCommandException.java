@@ -1,4 +1,4 @@
-package vrm;
+package vrm.exceptions;
 
 /**
  * Exception thrown when an unrecognized command is encountered.

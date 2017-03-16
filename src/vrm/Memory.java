@@ -3,10 +3,11 @@ package vrm;
 import com.sun.istack.internal.NotNull;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Spliterator;
 import java.util.function.Consumer;
+
+import vrm.exceptions.MemoryOutOfBoundsException;
 
 /**
  * Memory - an array of fixed position words.

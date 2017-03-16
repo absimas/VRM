@@ -1,6 +1,8 @@
-package vrm;
+package vrm.exceptions;
 
 import com.sun.istack.internal.NotNull;
+
+import vrm.Command;
 
 /**
  * Exception thrown a {@link Command} is unhandled.

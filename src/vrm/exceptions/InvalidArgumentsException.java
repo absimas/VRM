@@ -1,4 +1,6 @@
-package vrm;
+package vrm.exceptions;
+
+import vrm.Command;
 
 /**
  * Exception thrown when command argument count does not match the count specified by {@link Command.Type#argCount}

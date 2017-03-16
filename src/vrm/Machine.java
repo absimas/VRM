@@ -1,5 +1,9 @@
 package vrm;
 
+import vrm.exceptions.MemoryOutOfBoundsException;
+import vrm.exceptions.NumberOverflowException;
+import vrm.exceptions.UnhandledCommandException;
+
 /**
  * Main class that allows:
  * <ul>

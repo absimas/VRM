@@ -3,6 +3,9 @@ package vrm;
 import com.sun.istack.internal.NotNull;
 import com.sun.istack.internal.Nullable;
 
+import vrm.exceptions.InvalidArgumentsException;
+import vrm.exceptions.InvalidCommandException;
+
 /**
  * Created by Simas on 2017 Mar 04.
  */

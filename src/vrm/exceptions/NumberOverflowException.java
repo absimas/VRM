@@ -1,4 +1,6 @@
-package vrm;
+package vrm.exceptions;
+
+import vrm.Word;
 
 /**
  * Thrown when number arithmetic result does not fit in a {@link Word}.

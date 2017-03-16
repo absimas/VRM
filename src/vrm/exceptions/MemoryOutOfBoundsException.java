@@ -1,4 +1,4 @@
-package vrm;
+package vrm.exceptions;
 
 /**
  * Created when a word that's OOB in the given memory is referenced.

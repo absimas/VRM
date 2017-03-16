@@ -1,5 +1,8 @@
 package vrm;
 
+import vrm.exceptions.InvalidArgumentsException;
+import vrm.exceptions.InvalidCommandException;
+
 /**
  * Created by Simas on 2017 Mar 04.
  */

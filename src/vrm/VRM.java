@@ -80,7 +80,7 @@ public class VRM {
     final VirtualMachine vm = rm.virtualMachine;
 
     // Program of 10 words
-    final Memory program = new Memory(10);
+    final Memory program = new Memory(RealMachine.VM_MEMORY_SIZE / 10);
     program.replace(0, "PD013");
     program.replace(1, "CR013");
     program.replace(2, "AD012");
@@ -129,6 +129,8 @@ public class VRM {
             Character.getNumericValue(absolute.charAt(1)),
             Character.getNumericValue(absolute.charAt(2)));
 
+        // ToDo include the new command into command list so it's displayed and we know what's going on
+
         // Execute the command in the RM
         rm.execute(cmd);
       } else if (rm.PI != null) {
@@ -137,10 +139,12 @@ public class VRM {
         rm.PI = null;
 
         // ToDo run program interrupt program
+        // ToDo include the new commands into command list so they're displayed and we know what's going on
       } else if (rm.TI <= 0) {
         // Timer too low
 
         // ToDo run timer interrupt program
+        // ToDo include the new commands into command list so they're displayed and we know what's going on
 
         // Reset timer
         rm.TI = RealMachine.DEFAULT_TIMER;
@@ -150,10 +154,9 @@ public class VRM {
         rm.IOI = 0;
 
         // ToDo I/O interrupt program
+        // ToDo include the new commands into command list so they're displayed and we know what's going on
       }
     }
-
-
   }
 
 }

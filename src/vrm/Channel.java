@@ -10,4 +10,9 @@ public interface Channel {
   Word[] read() throws IOException;
   void write(Word[] words) throws IOException;
 
+  /**
+   * Get channel index.
+   */
+  int getIndex();
+
 }

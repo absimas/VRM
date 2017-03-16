@@ -144,4 +144,9 @@ public class ExternalMemory implements Channel {
     }
   }
 
+  @Override
+  public int getIndex() {
+    return 3;
+  }
+
 }

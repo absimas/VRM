@@ -22,4 +22,9 @@ public class Keyboard implements Channel {
     throw new IllegalStateException("Cannot write to keyboard!");
   }
 
+  @Override
+  public int getIndex() {
+    return 1;
+  }
+
 }

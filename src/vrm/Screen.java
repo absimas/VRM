@@ -26,4 +26,9 @@ public class Screen implements Channel {
     System.arraycopy(words, 0, this.words, 0, words.length);
   }
 
+  @Override
+  public int getIndex() {
+    return 2;
+  }
+
 }

@@ -2,7 +2,6 @@ package vrm;
 
 import com.sun.istack.internal.NotNull;
 import com.sun.istack.internal.Nullable;
-
 import vrm.exceptions.InvalidArgumentsException;
 import vrm.exceptions.InvalidCommandException;
 
@@ -75,7 +74,7 @@ public class Command {
 
   /**
    * Convenience method to put all argument fields {@link #x}, {@link #y} and {@link #z} into an array.
-   * @return
+   * @return array of {@link #x}, {@link #y} and {@link #z}
    */
   public int[] getArguments() {
     return new int[] { x, y, z };

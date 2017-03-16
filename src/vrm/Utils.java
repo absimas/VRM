@@ -14,6 +14,14 @@ public class Utils {
     return (value & flag) == flag;
   }
 
+  public static int setFlag(int value, int flag) {
+    return value | flag;
+  }
+
+  public static int clearFlag(int value, int flag) {
+    return value & (~flag);
+  }
+
   /**
    * Precedes the given string with zeroes until the wanted size is met.
    * Note that if the given string is longer, it will be trimmed to meet the size and no zeroes will be added.

@@ -43,7 +43,7 @@ public abstract class Machine {
    * @param command  command to be executed
    * @throws UnhandledCommandException when a command wasn't handled by this machine for whatever the causes (e.g. inadequate privileges)
    * @throws MemoryOutOfBoundsException when a command refers to a word outside the visible memory
-   * @throws NumberFormatException when either {@link #TMP} or referenced memory contains something that's not a number ToDo not sure about this
+   * @throws NumberFormatException when either {@link #TMP} or referenced memory contains something that's not a number
    * @throws NumberOverflowException when number arithmetic result does not fit in a word
    */
   public void execute(Command command) throws UnhandledCommandException, MemoryOutOfBoundsException, NumberFormatException, NumberOverflowException, InterruptedException {

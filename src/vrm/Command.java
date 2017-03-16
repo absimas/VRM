@@ -137,4 +137,19 @@ public class Command {
     return args;
   }
 
+  @Override
+  public String toString() {
+    String string = String.valueOf(type);
+    if (type.argCount > 0) {
+      string += x;
+      if (type.argCount > 1) {
+        string += y;
+        if (type.argCount > 2) {
+          string += z;
+        }
+      }
+    }
+    return string;
+  }
+
 }

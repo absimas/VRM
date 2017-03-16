@@ -25,7 +25,7 @@ public class VirtualMachine extends Machine {
   }
 
   @Override
-  public void execute(Command command) throws UnhandledCommandException, MemoryOutOfBoundsException {
+  public void execute(Command command) throws UnhandledCommandException, MemoryOutOfBoundsException, InterruptedException {
     // Commands executed in a VM must have an x argument of 0
     if (command.x != 0) {
       realMachine.PI = RealMachine.ProgramInterrupt.INV_ADDRESS;

@@ -132,9 +132,14 @@ public class RealMachine extends Machine {
   }
 
   @Override
-  public void execute(Command command) throws UnhandledCommandException, MemoryOutOfBoundsException {
+  public void execute(Command command) throws UnhandledCommandException, MemoryOutOfBoundsException, InterruptedException {
     switch (command.type) {
       case GD:
+        // Block until keyboard is free
+        if (isChannelBusy(keyboard.getIndex())) {
+          wait();
+        }
+
         // Block keyboard channel
         setChannelBusy(keyboard.getIndex(), true);
 
@@ -150,6 +155,11 @@ public class RealMachine extends Machine {
         setChannelBusy(keyboard.getIndex(), false);
         break;
       case PD:
+        // Block until screen is free
+        if (isChannelBusy(screen.getIndex())) {
+          wait();
+        }
+
         // Block screen channel
         setChannelBusy(screen.getIndex(), true);
 
@@ -163,6 +173,11 @@ public class RealMachine extends Machine {
         setChannelBusy(screen.getIndex(), false);
         break;
       case RD: {
+        // Block until external memory is free
+        if (isChannelBusy(externalMemory.getIndex())) {
+          wait();
+        }
+
         // Block external memory channel
         setChannelBusy(externalMemory.getIndex(), true);
 
@@ -179,6 +194,11 @@ public class RealMachine extends Machine {
         break;
       }
       case WD: {
+        // Block until external memory is free
+        if (isChannelBusy(externalMemory.getIndex())) {
+          wait();
+        }
+
         // Block external memory channel
         setChannelBusy(externalMemory.getIndex(), true);
 
@@ -196,6 +216,11 @@ public class RealMachine extends Machine {
         break;
       }
       case SD:
+        // Block until external memory is free
+        if (isChannelBusy(externalMemory.getIndex())) {
+          wait();
+        }
+
         // Block external memory channel
         setChannelBusy(externalMemory.getIndex(), true);
 

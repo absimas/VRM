@@ -42,7 +42,7 @@ public abstract class Machine {
    * @throws NumberFormatException when either {@link #TMP} or referenced memory contains something that's not a number ToDo not sure about this
    * @throws NumberOverflowException when number arithmetic result does not fit in a word
    */
-  public void execute(Command command) throws UnhandledCommandException, MemoryOutOfBoundsException, NumberFormatException, NumberOverflowException {
+  public void execute(Command command) throws UnhandledCommandException, MemoryOutOfBoundsException, NumberFormatException, NumberOverflowException, InterruptedException {
     switch (command.type) {
       case CR:
         TMP = memory.get(command.getArgument());

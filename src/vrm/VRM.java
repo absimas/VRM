@@ -1,8 +1,5 @@
 package vrm;
 
-import java.util.Arrays;
-import java.util.List;
-
 /**
  * Created by Simas on 2017 Mar 04.
  */
@@ -66,7 +63,7 @@ public class VRM {
     }
   }
 
-  private void vmProgramExample() {
+  private void vmProgramExample() throws InterruptedException {
     // Create a RM with a 100 word memory
     final RealMachine rm = new RealMachine(new Memory(100));
 

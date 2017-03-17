@@ -292,7 +292,7 @@ public class RealMachine extends Machine {
           final Memory vmMemory = memory.sublist(vmMemoryOffset, vmMemoryOffset + VM_MEMORY_SIZE);
 
           // Generate a page table for this memory
-          final PageTable vmPageTable = new PageTable(Utils.generateRange(vmMemoryOffset, vmMemoryOffset + VM_MEMORY_SIZE));
+          final PageTable vmPageTable = new PageTable(Utils.generateRange(vmMemoryOffset, vmMemoryOffset + VM_MEMORY_SIZE / 10));
           // Save page table
           memory.replace(vmPageTableOffset, vmPageTable.table);
 

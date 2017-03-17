@@ -145,13 +145,12 @@ public abstract class Machine {
       }
       case CP:
         // Convert
-        final String tmp = TMP.toString();
-        final String mem = memory.get(command.getArgument()).toString();
+        final int tmp = TMP.toNumber();
+        final int mem = memory.get(command.getArgument()).toNumber();
 
-        final int c = tmp.compareTo(mem);
-        if (c == 0) {
+        if (tmp == mem) {
           C = Comparison.EQUAL;
-        } else if (c > 0) {
+        } else if (tmp > mem) {
           C = Comparison.MORE;
         } else {
           C = Comparison.LESS;

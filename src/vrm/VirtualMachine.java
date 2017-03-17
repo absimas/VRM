@@ -31,7 +31,7 @@ public class VirtualMachine extends Machine {
 
   @Override
   protected void execute(Command command) throws UnhandledCommandException, MemoryOutOfBoundsException, InterruptedException {
-    System.out.println("command = [" + command + "] from " + this);
+    System.out.println("Execute " + command + " in " + this);
     // Commands executed in a VM must have an x argument of 0
     if (command.x != 0) {
       throw new MemoryOutOfBoundsException(String.format("Invalid command address encountered when executing %s!", command));

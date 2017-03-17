@@ -158,7 +158,7 @@ public class RealMachine extends Machine {
 
   @Override
   protected void execute(Command command) throws UnhandledCommandException, MemoryOutOfBoundsException, InterruptedException {
-    System.out.println("command = [" + command + "] from " + this);
+    System.out.println("Execute " + command + " in " + this);
     switch (command.type) {
       case GD:
         // Block until keyboard is free

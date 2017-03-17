@@ -5,6 +5,7 @@ import java.util.List;
 
 import vrm.exceptions.InvalidArgumentsException;
 import vrm.exceptions.InvalidCommandException;
+import vrm.exceptions.MemoryOutOfBoundsException;
 
 /**
  * Created by Simas on 2017 Mar 04.
@@ -105,55 +106,122 @@ public class VRM {
     // Point IC to the start of the program
     vm.IC = 0;
 
-    // Loop execution
+    // CPU ALGORITHM
     while (true) {
-      // Execute VM
-      vm.step();
+      // 1. Check TI
+      if (rm.TI <= 0) {
+        timerInterrupt(rm);
+        continue;
+      }
 
-      // No interruptions - nothing to do
-      if (!rm.isInterrupted()) continue;
+      // 3. Check IC
+      if (vm.IC >= 100) {
+        rm.PI = RealMachine.ProgramInterrupt.INV_ADDRESS;
+        programInterrupt(rm);
+        continue;
+      }
 
+      // Save IC
+      final int savedIC = vm.IC;
+
+      // 4. Increment IC
+      vm.IC++;
+
+      // 2. Read instruction pointed by the saved IC
+      final Command command;
+      try {
+        command = Command.parse(vm.memory.get(savedIC));
+      } catch (InvalidCommandException | InvalidArgumentsException e) {
+        e.printStackTrace();
+
+        // 5. Invalid instruction
+        rm.PI = RealMachine.ProgramInterrupt.INV_OP;
+        programInterrupt(rm);
+        continue;
+      } catch (MemoryOutOfBoundsException e) {
+        e.printStackTrace();
+
+        // 6. Invalid address (pointed by IC)
+        rm.PI = RealMachine.ProgramInterrupt.INV_ADDRESS;
+        programInterrupt(rm);
+        continue;
+      }
+
+      // 7. Decrement TI
+      rm.TI--;
+
+      // 8. Execute instruction
+      try {
+        vm.execute(command);
+      } catch (MemoryOutOfBoundsException e) {
+        e.printStackTrace();
+        // 9. Invalid address during command execution
+        rm.PI = RealMachine.ProgramInterrupt.INV_ADDRESS;
+        programInterrupt(rm);
+        continue;
+      }
+
+      if (!rm.isInterrupted()) {
+        // 10. Go to start
+        continue;
+      }
+
+      // 11. Handle interruptions
       if (rm.SI.ordinal() > 0) {
-        // When a VM can't execute a command, we duplicate the IC and try executing the same command in the RM.
-        // When RM executes a command that's located in the context of a VM, the argument is converted to an absolute address.
-
-        // Switch to super mode
-        rm.MODE = RealMachine.Mode.S;
-
-        // Convert VMs IC into an absolute address
-        rm.IC = rm.getAbsoluteAddress(vm.IC);
-
-        // Execute the command, now in the RM
-        rm.step();
-
-        // Unprivileged command was executed in the RM.
-        // Now we can move on with the VM execution so we increment its IC and clear the SI register.
-        vm.IC++;
-        rm.SI = RealMachine.SuperInterrupt.NONE;
+        superInterrupt(rm, savedIC);
       } else if (rm.PI.ordinal() > 0) {
-        // Command execution failed
-        // Clear PI
-        rm.PI = RealMachine.ProgramInterrupt.NONE;
-
-        // ToDo run PI program
-        // ToDo include the new commands into command list so they're displayed and we know what's going on
+        programInterrupt(rm);
       } else if (rm.TI <= 0) {
-        // Timer too low
-
-        // ToDo run TI program
-        // ToDo include the new commands into command list so they're displayed and we know what's going on
-
-        // Reset timer
-        rm.TI = RealMachine.DEFAULT_TIMER;
+        timerInterrupt(rm);
       } else if (rm.IOI > 0) {
-        // I/O interruption
-        // Clear IOI
-        rm.IOI = 0;
-
-        // ToDo I/O interrupt program
-        // ToDo include the new commands into command list so they're displayed and we know what's going on
+        ioiInterrupt(rm);
       }
     }
+  }
+
+  private void programInterrupt(RealMachine rm) {
+    // ToDo run PI handler
+    // ToDo include the new commands into command list so they're displayed and we know what's going on
+
+    // Clear PI
+    rm.PI = RealMachine.ProgramInterrupt.NONE;
+  }
+
+  private void timerInterrupt(RealMachine rm) {
+    // ToDo run TI handler
+    // ToDo include the new commands into command list so they're displayed and we know what's going on
+
+    // Reset TI
+    rm.TI = RealMachine.DEFAULT_TIMER;
+  }
+
+  /**
+   * When a VM can't execute a command, we duplicate saved IC value and execute the command in the RM.
+   * When RM executes a command that's located in the context of a VM, the argument is converted to an absolute address.
+   * @param rm       machine that will take over the execution
+   * @param failedIC IC value pointing to the failing command
+   */
+  private void superInterrupt(RealMachine rm, int failedIC) throws InterruptedException {
+    // ToDo run SI handler
+    // ToDo include the new commands into command list so they're displayed and we know what's going on
+
+    // Convert the saved IC into an absolute address
+    rm.IC = rm.getAbsoluteAddress(failedIC);
+
+    // Execute the command, now in the RM
+    rm.step();
+
+    // Unprivileged command was executed in the RM.
+    // We can now clear the SI register.
+    rm.SI = RealMachine.SuperInterrupt.NONE;
+  }
+
+  private void ioiInterrupt(RealMachine rm) {
+    // ToDo I/O interruption handler
+    // ToDo include the new commands into command list so they're displayed and we know what's going on
+
+    // Clear IOI
+    rm.IOI = 0;
   }
 
 }

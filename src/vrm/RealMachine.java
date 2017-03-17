@@ -402,8 +402,18 @@ public class RealMachine extends Machine {
    * - When RM executes a command that's located in the context of a VM, the argument is converted to an absolute address.
    * @see Machine#step()
    */
-  @Override
+
+  /**
+   * Executes instruction pointed by {@code #IC}.
+   * This method returns false if the executing the current instruction caused an interruption.
+   * @return true if the instruction was executed successfully, false otherwise.
+   * @throws UnhandledCommandException when a command cannot be handled in this machine. E.g. STVMx in a VM.
+   * @throws InterruptedException when a machine block (e.g. when waiting for a channel) is interrupted
+   */
   public boolean step() throws UnhandledCommandException, InterruptedException {
+    // Switch to super mode
+    MODE = RealMachine.Mode.S;
+
     // Fetch Word at IC
     final Word word;
     try {
@@ -436,8 +446,11 @@ public class RealMachine extends Machine {
       execute(command);
     } catch (MemoryOutOfBoundsException e) {
       e.printStackTrace();
-      throw new RuntimeException(String.format("RM referenced an invalid address when executing %d!", command));
+      throw new RuntimeException(String.format("RM referenced an invalid address when executing %s!", command));
     }
+
+    // Switch back to user mode
+    MODE = RealMachine.Mode.U;
 
     return true;
   }

@@ -1,7 +1,5 @@
 package vrm;
 
-import vrm.exceptions.InvalidArgumentsException;
-import vrm.exceptions.InvalidCommandException;
 import vrm.exceptions.MemoryOutOfBoundsException;
 import vrm.exceptions.UnhandledCommandException;
 
@@ -102,49 +100,6 @@ public class VirtualMachine extends Machine {
     TMP = new Word(registers.substring(0, 5));
     IC = Integer.valueOf(registers.substring(5, 7));
     C = Comparison.values()[Character.getNumericValue(registers.charAt(7))];
-  }
-
-  @Override
-  public boolean step() throws UnhandledCommandException, InterruptedException {
-    if (realMachine.isInterrupted()) return false;
-
-    // Convert memory word (pointed by IC) to a command
-    final Command command;
-    try {
-      command = Command.parse(memory.get(IC));
-    } catch (InvalidCommandException | InvalidArgumentsException e) {
-      e.printStackTrace();
-
-      // Set PI
-      realMachine.PI = RealMachine.ProgramInterrupt.INV_OP;
-
-      // Notify about failure to parse the current instruction
-      return false;
-    } catch (MemoryOutOfBoundsException e) {
-      // Command couldn't be executed due to IC pointing to an incorrect address
-      e.printStackTrace();
-
-      // Set PI
-      realMachine.PI = RealMachine.ProgramInterrupt.INV_ADDRESS;
-
-      // Notify about failure to parse the current instruction
-      return false;
-    }
-
-    // Execute the command
-    try {
-      execute(command);
-    } catch (MemoryOutOfBoundsException e) {
-      // Command couldn't be executed due to internally failing addresses
-      e.printStackTrace();
-      // Set PI
-      realMachine.PI = RealMachine.ProgramInterrupt.INV_ADDRESS;
-
-      // Notify about failure to execute the current instruction
-      return false;
-    }
-
-    return true;
   }
 
 }

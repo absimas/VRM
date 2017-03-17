@@ -52,8 +52,8 @@ public class Memory implements Iterable<Word> {
   public Word get(int index) throws MemoryOutOfBoundsException {
     try {
       return words.get(index);
-    } catch (IndexOutOfBoundsException ignored) {
-      throw new MemoryOutOfBoundsException(ignored);
+    } catch (IndexOutOfBoundsException e) {
+      throw new MemoryOutOfBoundsException(e);
     }
   }
 
@@ -64,8 +64,8 @@ public class Memory implements Iterable<Word> {
   public Word[] get(int start, int count) throws MemoryOutOfBoundsException {
     try {
       return words.subList(start, start+count).toArray(new Word[0]);
-    } catch (IndexOutOfBoundsException ignored) {
-      throw new MemoryOutOfBoundsException(ignored);
+    } catch (IndexOutOfBoundsException e) {
+      throw new MemoryOutOfBoundsException(e);
     }
   }
 

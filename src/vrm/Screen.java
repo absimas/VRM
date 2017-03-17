@@ -23,6 +23,7 @@ public class Screen implements Channel {
 
   @Override
   public void write(@NotNull Word... words) {
+    System.out.println("Write to screen: " + Arrays.toString(words));
     if (words == null || words.length != SIZE) {
       throw new IllegalArgumentException(String.format("Must write %d words!", SIZE));
     }

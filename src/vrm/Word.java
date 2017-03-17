@@ -16,6 +16,7 @@ public class Word {
    */
   public Word() {
     symbols = new char[MAX_LENGTH];
+    Arrays.fill(symbols, '0');
   }
 
   /**

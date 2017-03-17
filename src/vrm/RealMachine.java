@@ -155,7 +155,7 @@ public class RealMachine extends Machine {
   }
 
   @Override
-  public void execute(Command command) throws UnhandledCommandException, MemoryOutOfBoundsException, InterruptedException {
+  protected void execute(Command command) throws UnhandledCommandException, MemoryOutOfBoundsException, InterruptedException {
     System.out.println("command = [" + command + "] from " + this);
     switch (command.type) {
       case GD:

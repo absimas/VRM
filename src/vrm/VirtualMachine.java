@@ -28,7 +28,7 @@ public class VirtualMachine extends Machine {
   }
 
   @Override
-  public void execute(Command command) throws UnhandledCommandException, MemoryOutOfBoundsException, InterruptedException {
+  protected void execute(Command command) throws UnhandledCommandException, MemoryOutOfBoundsException, InterruptedException {
     System.out.println("command = [" + command + "] from " + this);
     // Commands executed in a VM must have an x argument of 0
     if (command.x != 0) {

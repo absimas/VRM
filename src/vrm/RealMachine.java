@@ -1,5 +1,7 @@
 package vrm;
 
+import com.sun.istack.internal.NotNull;
+
 import vrm.exceptions.InvalidArgumentsException;
 import vrm.exceptions.InvalidCommandException;
 import vrm.exceptions.MemoryOutOfBoundsException;
@@ -25,6 +27,7 @@ public class RealMachine extends Machine {
    * Super Interruptions caused by a specific type Command ({@link Command.Type}).
    */
   public enum SuperInterrupt {
+    NONE(null),
     GD(Command.Type.GD),
     PD(Command.Type.PD),
     RD(Command.Type.RD),
@@ -43,6 +46,7 @@ public class RealMachine extends Machine {
    * Program Interruptions caused internal and source code problems.
    */
   public enum ProgramInterrupt {
+    NONE,
     /**
      * Invalid memory address.
      */
@@ -93,17 +97,19 @@ public class RealMachine extends Machine {
    */
   public int PTR;
   /**
-   * Program Interrupt. Default value = null. Size 1 byte.
+   * Program Interrupt. Default value = {@link ProgramInterrupt#NONE}. Size 1 byte.
    */
-  public ProgramInterrupt PI;
+  @NotNull
+  public ProgramInterrupt PI = ProgramInterrupt.NONE;
   /**
    * Timer Interrupt. [0.99]. Size 1 byte.
    */
   public int TI = DEFAULT_TIMER;
   /**
-   * Super Interrupt. Default value = null. Size 1 byte.
+   * Super Interrupt. Default value = {@link SuperInterrupt#NONE}. Size 1 byte.
    */
-  public SuperInterrupt SI;
+  @NotNull
+  public SuperInterrupt SI = SuperInterrupt.NONE;
   /**
    * I/O Interrupt. Bitmask [1..3]. 1 byte.
    */
@@ -335,9 +341,7 @@ public class RealMachine extends Machine {
    * Check interruption registers whether an interruption has occurred.
    */
   public boolean isInterrupted() {
-    final int pi = (PI == null ? 0 : PI.ordinal() + 1);
-    final int si = (SI == null ? 0 : SI.ordinal() + 1);
-    return pi + si + IOI > 0 || TI == 0;
+    return PI.ordinal() + SI.ordinal() + IOI > 0 || TI == 0;
   }
 
   /**

@@ -113,7 +113,7 @@ public class VRM {
       // No interruptions - nothing to do
       if (!rm.isInterrupted()) continue;
 
-      if (rm.SI != null) {
+      if (rm.SI.ordinal() > 0) {
         // When a VM can't execute a command, we duplicate the IC and try executing the same command in the RM.
         // When RM executes a command that's located in the context of a VM, the argument is converted to an absolute address.
 
@@ -126,13 +126,14 @@ public class VRM {
         // Execute the command, now in the RM
         rm.step();
 
-        // Unprivileged command was executed in the RM, now we can increment the IC on the VM that invoked the execution
+        // Unprivileged command was executed in the RM.
+        // Now we can move on with the VM execution so we increment its IC and clear the SI register.
         vm.IC++;
-        rm.SI = null;
-      } else if (rm.PI != null) {
+        rm.SI = RealMachine.SuperInterrupt.NONE;
+      } else if (rm.PI.ordinal() > 0) {
         // Command execution failed
         // Clear PI
-        rm.PI = null;
+        rm.PI = RealMachine.ProgramInterrupt.NONE;
 
         // ToDo run PI program
         // ToDo include the new commands into command list so they're displayed and we know what's going on

@@ -385,7 +385,7 @@ public class RealMachine extends Machine {
   }
 
   /**
-   * Gets VM page table at the specified address. // ToDo use VM index rather than address to minimise bug probability
+   * Gets VM page table at the specified address.
    * @param address page table address
    */
   private PageTable getPageTable(int address) {

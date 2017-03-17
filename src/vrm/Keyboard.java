@@ -1,5 +1,7 @@
 package vrm;
 
+import com.sun.istack.internal.NotNull;
+
 /**
  * Keyboard model. Used to read input.
  */
@@ -8,7 +10,7 @@ public class Keyboard implements Channel {
   /**
    * Size in word count.
    */
-  public static final int SIZE = 2;
+  public static final int SIZE = 1;
 
   public final Word[] words = new Word[SIZE];
 
@@ -18,7 +20,7 @@ public class Keyboard implements Channel {
   }
 
   @Override
-  public void write(Word[] words) {
+  public void write(@NotNull Word... words) {
     throw new IllegalStateException("Cannot write to keyboard!");
   }
 

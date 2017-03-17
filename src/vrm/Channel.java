@@ -1,5 +1,7 @@
 package vrm;
 
+import com.sun.istack.internal.NotNull;
+
 import java.io.IOException;
 
 /**
@@ -8,7 +10,7 @@ import java.io.IOException;
 public interface Channel {
 
   Word[] read() throws IOException;
-  void write(Word[] words) throws IOException;
+  void write(@NotNull Word... words) throws IOException;
 
   /**
    * Get channel index.

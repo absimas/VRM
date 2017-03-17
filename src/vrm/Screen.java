@@ -1,5 +1,9 @@
 package vrm;
 
+import com.sun.istack.internal.NotNull;
+
+import java.util.Arrays;
+
 /**
  * Screen model. Used to display output.
  */
@@ -8,7 +12,7 @@ public class Screen implements Channel {
   /**
    * Size in word count.
    */
-  public static final int SIZE = 2;
+  public static final int SIZE = 1;
 
   public final Word[] words = new Word[SIZE];
 
@@ -18,8 +22,8 @@ public class Screen implements Channel {
   }
 
   @Override
-  public void write(Word[] words) {
-    if (words.length != SIZE) {
+  public void write(@NotNull Word... words) {
+    if (words == null || words.length != SIZE) {
       throw new IllegalArgumentException(String.format("Must write %d words!", SIZE));
     }
 

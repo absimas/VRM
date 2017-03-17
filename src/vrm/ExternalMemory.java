@@ -21,7 +21,7 @@ public class ExternalMemory implements Channel {
   /**
    * Line size is equal to {@link #WORD_IO} words with 9 spaces and a newline.
    */
-  private static final int LINE_SIZE = Word.LENGTH * WORD_IO + 9 + 1;
+  private static final int LINE_SIZE = Word.MAX_LENGTH * WORD_IO + 9 + 1;
   /**
    * Initially all external memory words will be filled with these characters.
    */
@@ -54,7 +54,7 @@ public class ExternalMemory implements Channel {
   private void initialize() {
     // Create initial word
     String string = "";
-    for (int i = 0; i < Word.LENGTH; i++) {
+    for (int i = 0; i < Word.MAX_LENGTH; i++) {
       string += FILLER;
     }
     final Word word = new Word(string);
@@ -115,10 +115,10 @@ public class ExternalMemory implements Channel {
     int offset = 0;
     // There are 10 words on 1 line
     for (int i = 0; i < WORD_IO; i++) {
-      words[i] = new Word(new String(buffer, offset, Word.LENGTH));
+      words[i] = new Word(new String(buffer, offset, Word.MAX_LENGTH));
 
       // Increment offset by word length + a space
-      offset += Word.LENGTH + 1;
+      offset += Word.MAX_LENGTH + 1;
     }
 
     return words;
@@ -151,7 +151,7 @@ public class ExternalMemory implements Channel {
     final byte[] bytes = new byte[LINE_SIZE];
     int offset = 0;
     for (int i = 0; i < WORD_IO; i++) {
-      final byte[] wordBytes = String.format("%s ", words[i].toString()).getBytes();
+      final byte[] wordBytes = String.format("%5s ", words[i].toString()).getBytes();
 
       System.arraycopy(wordBytes, 0, bytes, offset, wordBytes.length);
 

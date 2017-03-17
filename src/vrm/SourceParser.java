@@ -1,12 +1,9 @@
 package vrm;
 
-import com.sun.org.apache.xpath.internal.SourceTree;
-
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Stream;
 import java.io.IOException;
 
 /**
@@ -19,12 +16,12 @@ public class SourceParser {
     }
 
     public List<Word> stringToWords(String string){
-        if (string.length() % Word.LENGTH != 0) {
+        if (string.length() % Word.MAX_LENGTH != 0) {
             // TODO add error handling or ignore extra bytes
         }
         List<Word> commands = new ArrayList<>();
-        for (int i = 0; i < string.length(); i += Word.LENGTH) {
-            commands.add(new Word(string.substring(i, i + Word.LENGTH)));
+        for (int i = 0; i < string.length(); i += Word.MAX_LENGTH) {
+            commands.add(new Word(string.substring(i, i + Word.MAX_LENGTH)));
         }
         return commands;
     }

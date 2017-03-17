@@ -77,7 +77,7 @@ public class VirtualMachine extends Machine {
    */
   public void saveRegisters() {
     // TMP as String
-    final String tmp = Utils.precedeZeroes(TMP.toString(), 5);
+    final String tmp = String.format("%5s", TMP.toString());
     // VM's IC register's max length is 2
     final String ic = Utils.precedeZeroes(IC, 2);
     // C as String

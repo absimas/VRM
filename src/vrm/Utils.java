@@ -45,8 +45,7 @@ public class Utils {
    * @see #precedeZeroes(String, int)
    */
   public static String precedeZeroes(int integer, int size) {
-    final String result = precedeZeroes(String.valueOf(integer), size);
-    return result;
+    return precedeZeroes(String.valueOf(integer), size);
   }
 
   /**

@@ -1,12 +1,5 @@
 package vrm;
 
-import vrm.Command;
-import vrm.Comparison;
-import vrm.Memory;
-import vrm.Utils;
-import vrm.Word;
-import vrm.exceptions.InvalidArgumentsException;
-import vrm.exceptions.InvalidCommandException;
 import vrm.exceptions.MemoryOutOfBoundsException;
 import vrm.exceptions.NumberOverflowException;
 import vrm.exceptions.UnhandledCommandException;
@@ -65,15 +58,16 @@ public abstract class Machine {
         final int mem = memory.get(command.getArgument()).toNumber();
 
         // Add
-        final int result = tmp + mem;
+        final String result = String.valueOf(tmp + mem);
+
 
         // Overflow
-        if (String.valueOf(result).length() > Word.LENGTH) {
-          throw new NumberOverflowException(String.format("%d + %d = %d which does not fit within a word!", tmp, mem, result));
+        if (result.length() > Word.MAX_LENGTH) {
+          throw new NumberOverflowException(String.format("%d + %d = %s which does not fit within a word!", tmp, mem, result));
         }
 
         // Save the result in TMP
-        TMP = new Word(Utils.precedeZeroes(result, Word.LENGTH));
+        TMP = new Word(result);
 
         IC++;
         break;
@@ -84,15 +78,15 @@ public abstract class Machine {
         final int mem = memory.get(command.getArgument()).toNumber();
 
         // Subtract
-        final int result = tmp - mem;
+        final String result = String.valueOf(tmp - mem);
 
         // Overflow
-        if (String.valueOf(result).length() > Word.LENGTH) {
-          throw new NumberOverflowException(String.format("%d - %d = %d which does not fit within a word!", tmp, mem, result));
+        if (result.length() > Word.MAX_LENGTH) {
+          throw new NumberOverflowException(String.format("%d - %d = %s which does not fit within a word!", tmp, mem, result));
         }
 
         // Save the result in TMP
-        TMP = new Word(Utils.precedeZeroes(result, Word.LENGTH));
+        TMP = new Word(result);
 
         IC++;
         break;
@@ -103,15 +97,15 @@ public abstract class Machine {
         final int mem = memory.get(command.getArgument()).toNumber();
 
         // Multiply
-        final int result = tmp * mem;
+        final String result = String.valueOf(tmp * mem);
 
         // Overflow
-        if (String.valueOf(result).length() > Word.LENGTH) {
-          throw new NumberOverflowException(String.format("%d * %d = %d which does not fit within a word!", tmp, mem, result));
+        if (result.length() > Word.MAX_LENGTH) {
+          throw new NumberOverflowException(String.format("%d * %d = %s which does not fit within a word!", tmp, mem, result));
         }
 
         // Save the result in TMP
-        TMP = new Word(Utils.precedeZeroes(result, Word.LENGTH));
+        TMP = new Word(result);
 
         IC++;
         break;
@@ -122,10 +116,10 @@ public abstract class Machine {
         final int mem = memory.get(command.getArgument()).toNumber();
 
         // Mod
-        final int result = tmp % mem;
+        final String result = String.valueOf(tmp % mem);
 
         // Save the result in TMP
-        TMP = new Word(Utils.precedeZeroes(result, Word.LENGTH));
+        TMP = new Word(result);
 
         IC++;
         break;
@@ -141,10 +135,10 @@ public abstract class Machine {
         }
 
         // Divide
-        final int result = tmp / mem;
+        final String result = String.valueOf(tmp / mem);
 
         // Save the result in TMP
-        TMP = new Word(Utils.precedeZeroes(result, Word.LENGTH));
+        TMP = new Word(result);
 
         IC++;
         break;

@@ -13,10 +13,9 @@ import vrm.exceptions.UnhandledCommandException;
 public abstract class Machine {
 
   /**
-   * Instruction Counter. Length specifies the maximum instruction size.
-   * E.g. length == 2 means [0..99], while length == 3 means [0..999].
+   * Instruction Counter. Points to a memory address of the currently executed instruction.
    */
-  public final int[] IC;
+  public int IC;
   /**
    * Memory.
    */
@@ -33,9 +32,6 @@ public abstract class Machine {
 
   protected Machine(Memory memory) {
     this.memory = memory;
-
-    // Create an IC big enough to cover all the memory
-    IC = new int[String.valueOf(this.memory.size()).length()];
   }
 
   /**
@@ -148,22 +144,15 @@ public abstract class Machine {
           C = Comparison.LESS;
         }
         break;
-      case JP: {
-        String ic = String.valueOf(command.getArgument());
+      case JP:
         // Overflow
-        if (ic.length() > IC.length) {
-          throw new MemoryOutOfBoundsException("JP referenced an invalid memory point: " + ic);
+        if (command.getArgument() > memory.size()) {
+          throw new MemoryOutOfBoundsException("JP referenced an invalid memory point: " + command.getArgument());
         }
-
-        // Precede with zeroes
-        ic = Utils.precedeZeroes(ic, IC.length);
 
         // Write IC
-        for (int i = 0; i < ic.length(); i++) {
-          IC[i] = ic.charAt(i);
-        }
+        IC = command.getArgument();
         break;
-      }
       case JE:
         if (C != Comparison.EQUAL) break;
         // Execute JP

@@ -77,8 +77,8 @@ public class VirtualMachine extends Machine {
   public void saveRegisters() {
     // TMP as String
     final String tmp = Utils.precedeZeroes(TMP.toString(), 5);
-    // IC as String
-    final String ic = String.format("%d%d", IC[0], IC[1]);
+    // VM's IC register's max length is 2
+    final String ic = Utils.precedeZeroes(IC, 2);
     // C as String
     final String c = String.valueOf(C.ordinal());
     // Complete string
@@ -99,8 +99,7 @@ public class VirtualMachine extends Machine {
     final String registers = String.format("%s%s", memory.get(91).toString(), memory.get(92).toString());
 
     TMP = new Word(registers.substring(0, 5));
-    IC[0] = Character.getNumericValue(registers.charAt(5));
-    IC[1] = Character.getNumericValue(registers.charAt(6));
+    IC = Integer.valueOf(registers.substring(5, 7));
     C = Comparison.values()[Character.getNumericValue(registers.charAt(7))];
   }
 

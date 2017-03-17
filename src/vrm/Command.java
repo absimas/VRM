@@ -89,7 +89,7 @@ public class Command {
    */
   @Nullable
   public static Command parse(@NotNull Word word) throws InvalidCommandException, InvalidArgumentsException {
-    final String stringWord = new String(word.getSymbols());
+    final String stringWord = word.toString();
 
     final int[] args;
     for (Type type : Type.values()) {
@@ -103,6 +103,26 @@ public class Command {
   }
 
   /**
+   * Convert a {@link String} into a {@link Command}.
+   * @param string word to be parsed
+   * @return parsed command
+   * @throws InvalidCommandException thrown when command couldn't be recognized
+   * @throws InvalidArgumentsException thrown when command was recognized but its arguments were invalid
+   */
+  @Nullable
+  public static Command parse(@NotNull String string) throws InvalidCommandException, InvalidArgumentsException {
+    final int[] args;
+    for (Type type : Type.values()) {
+      if (string.startsWith(type.name())) {
+        args = extractArguments(string, Type.CR);
+        return new Command(type, args);
+      }
+    }
+
+    throw new InvalidCommandException("Unrecognized command from word: " + string);
+  }
+
+  /**
    * Extract arguments from a word.
    * @param word word that contains the command and its arguments.
    * @param type command type
@@ -111,17 +131,27 @@ public class Command {
    */
   @Nullable
   public static int[] extractArguments(@NotNull Word word, Type type) throws InvalidArgumentsException {
-    final String stringWord = new String(word.getSymbols());
+    return extractArguments(word.toString(), type);
+  }
 
+  /**
+   * Extract arguments from a word.
+   * @param string string that contains the command and its arguments.
+   * @param type   command type
+   * @return extracted arguments parsed into an int[]
+   * @throws InvalidArgumentsException when type argument count doesn't match this word or when the arguments cannot be parsed into integers
+   */
+  @Nullable
+  public static int[] extractArguments(@NotNull String string, Type type) throws InvalidArgumentsException {
     // If this command isn't supposed to have any arguments, ignore the remaining word.
     if (type.argCount == 0) return null;
 
     // Remove command from word. E.g. AD105 becomes 105.
-    final String arguments = stringWord.substring(type.name().length(), stringWord.length());
+    final String arguments = string.substring(type.name().length(), string.length());
 
     // Ensure char count matches the expected argument count
     if (type.argCount != arguments.length()) {
-      throw new InvalidArgumentsException(String.format("Invalid arguments detected for type %s. Word was %s", type, word));
+      throw new InvalidArgumentsException(String.format("Invalid arguments detected for type %s. Word was %s", type, string));
     }
 
     // Extract arguments converted to ints
@@ -131,7 +161,7 @@ public class Command {
         args[i] = Integer.parseInt(String.valueOf(arguments.charAt(i)));
       }
     } catch (NumberFormatException ignored) {
-      throw new InvalidArgumentsException(String.format("Invalid arguments detected for type %s. Word was %s", type, word));
+      throw new InvalidArgumentsException(String.format("Invalid arguments detected for type %s. Word was %s", type, string));
     }
 
     return args;

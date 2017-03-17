@@ -1,5 +1,12 @@
 package vrm;
 
+import vrm.Command;
+import vrm.Comparison;
+import vrm.Memory;
+import vrm.Utils;
+import vrm.Word;
+import vrm.exceptions.InvalidArgumentsException;
+import vrm.exceptions.InvalidCommandException;
 import vrm.exceptions.MemoryOutOfBoundsException;
 import vrm.exceptions.NumberOverflowException;
 import vrm.exceptions.UnhandledCommandException;
@@ -46,9 +53,11 @@ public abstract class Machine {
     switch (command.type) {
       case CR:
         TMP = memory.get(command.getArgument());
+        IC++;
         break;
       case CM:
         memory.replace(command.getArgument(), TMP);
+        IC++;
         break;
       case AD: {
         // Convert
@@ -65,6 +74,8 @@ public abstract class Machine {
 
         // Save the result in TMP
         TMP = new Word(Utils.precedeZeroes(result, Word.LENGTH));
+
+        IC++;
         break;
       }
       case SB: {
@@ -82,6 +93,8 @@ public abstract class Machine {
 
         // Save the result in TMP
         TMP = new Word(Utils.precedeZeroes(result, Word.LENGTH));
+
+        IC++;
         break;
       }
       case ML: {
@@ -99,6 +112,8 @@ public abstract class Machine {
 
         // Save the result in TMP
         TMP = new Word(Utils.precedeZeroes(result, Word.LENGTH));
+
+        IC++;
         break;
       }
       case MD: {
@@ -111,6 +126,8 @@ public abstract class Machine {
 
         // Save the result in TMP
         TMP = new Word(Utils.precedeZeroes(result, Word.LENGTH));
+
+        IC++;
         break;
       }
       case DV: {
@@ -128,6 +145,8 @@ public abstract class Machine {
 
         // Save the result in TMP
         TMP = new Word(Utils.precedeZeroes(result, Word.LENGTH));
+
+        IC++;
         break;
       }
       case CP:
@@ -143,6 +162,8 @@ public abstract class Machine {
         } else {
           C = Comparison.LESS;
         }
+
+        IC++;
         break;
       case JP:
         // Overflow
@@ -154,17 +175,29 @@ public abstract class Machine {
         IC = command.getArgument();
         break;
       case JE:
-        if (C != Comparison.EQUAL) break;
+        // If not equal, increment IC and leave
+        if (C != Comparison.EQUAL) {
+          IC++;
+          break;
+        }
         // Execute JP
         execute(new Command(Command.Type.JP, command.getArguments()));
         break;
       case JL:
-        if (C != Comparison.LESS) break;
+        // If not less, increment IC and leave
+        if (C != Comparison.LESS) {
+          IC++;
+          break;
+        }
         // Execute JP
         execute(new Command(Command.Type.JP, command.getArguments()));
         break;
       case JM:
-        if (C != Comparison.MORE) break;
+        // If not more, increment IC and leave
+        if (C != Comparison.MORE) {
+          IC++;
+          break;
+        }
         // Execute JP
         execute(new Command(Command.Type.JP, command.getArguments()));
         break;
@@ -172,5 +205,14 @@ public abstract class Machine {
         throw new IllegalStateException(String.format("Tried to handle an unexpected command %s in %s!", command, this));
     }
   }
+
+  /**
+   * Executes instruction pointed by {@code #IC}.
+   * This method returns false if the executing the current instruction caused an interruption.
+   * @return true if the instruction was executed successfully, false otherwise.
+   * @throws UnhandledCommandException when a command cannot be handled in this machine. E.g. STVMx in a VM.
+   * @throws InterruptedException when a machine block (e.g. when waiting for a channel) is interrupted
+   */
+  public abstract boolean step() throws UnhandledCommandException, InterruptedException;
 
 }

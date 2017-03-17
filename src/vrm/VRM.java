@@ -1,5 +1,8 @@
 package vrm;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import vrm.exceptions.InvalidArgumentsException;
 import vrm.exceptions.InvalidCommandException;
 
@@ -12,6 +15,8 @@ public class VRM {
   public static void main(String[] args) throws InterruptedException {
     new VRM().vmProgramExample();
   }
+
+  private final List<String> commands = new ArrayList<>();
 
   private void vmCreationExample() {
     final RealMachine rm = new RealMachine(new Memory(RealMachine.MEMORY_SIZE));
@@ -44,25 +49,23 @@ public class VRM {
   }
 
   private void commandExample2() {
-    // Memory consisting 10 words
-    final Memory memory = new Memory(10);
+    // Prepare commands that we'll use
+    commands.clear();
+    commands.add("PD013");
+    commands.add("CR013");
+    commands.add("AD012");
+    commands.add("CP023");
+    commands.add("JM024");
+    commands.add("CM011");
+    commands.add("CR013");
+    commands.add("CR011");
+    commands.add("CM013");
+    commands.add("JP000");
 
-    // Fill words
-    memory.replace(0, "PD013");
-    memory.replace(1, "CR013");
-    memory.replace(2, "AD012");
-    memory.replace(3, "CP023");
-    memory.replace(4, "JM024");
-    memory.replace(5, "CM011");
-    memory.replace(6, "CR013");
-    memory.replace(7, "CR011");
-    memory.replace(8, "CM013");
-    memory.replace(9, "JP000");
-
-    // Parse words into commands
+    // Parse commands
     try {
-      for (Word word : memory) {
-        Command.parse(word);
+      for (String string : commands) {
+        Command.parse(string);
         // Execute command
       }
     } catch (InvalidCommandException | InvalidArgumentsException e) {
@@ -72,15 +75,17 @@ public class VRM {
   }
 
   private void vmProgramExample() throws InterruptedException {
-    // Create a RM with a 100 word memory
+    // Create a RM with a 1000 word memory
     final RealMachine rm = new RealMachine(new Memory(RealMachine.MEMORY_SIZE));
 
-    // Create a VM
-    rm.execute(new Command(Command.Type.STVM, 0));
+    // Imitate VM creation command
+    rm.memory.replace(0, "STVM0");
+    rm.IC = 0;
+    rm.step();
     final VirtualMachine vm = rm.virtualMachine;
 
-    // Program of 10 words
-    final Memory program = new Memory(RealMachine.VM_MEMORY_SIZE / 10);
+    // Store a program (fibonacci less than 1000) in VM memory
+    final Memory program = vm.memory;
     program.replace(0, "PD013");
     program.replace(1, "CR013");
     program.replace(2, "AD012");
@@ -88,62 +93,53 @@ public class VRM {
     program.replace(4, "JM024");
     program.replace(5, "CM011");
     program.replace(6, "CR013");
-    program.replace(7, "CR011");
-    program.replace(8, "CM013");
-    program.replace(9, "JP000");
+    program.replace(7, "CM012");
+    program.replace(8, "CR011");
+    program.replace(9, "CM013");
+    program.replace(10, "JP000");
+    program.replace(12, "00000");
+    program.replace(13, "00001");
+    program.replace(23, "01000");
+    program.replace(24, "HALT0");
 
-    // Loop each word in the program
-    for (Word word : program) {
-      // Convert word to a command
-      final Command command;
-      try {
-        command = Command.parse(word);
-      } catch (InvalidCommandException | InvalidArgumentsException e) {
-        // Parsing the command failed
-        e.printStackTrace();
+    // Point IC to the start of the program
+    vm.IC = 0;
 
-        // Set PI
-//        rm.PI = RealMachine.ProgramInterrupt.INV_OP;
+    // Loop execution
+    while (true) {
+      // Execute VM
+      vm.step();
 
-        // Clear PI
-//        rm.PI = null;
-
-        // ToDo run program interrupt program
-        continue;
-      }
-
-      // Execute command in a VM
-      vm.execute(command);
+      // No interruptions - nothing to do
+      if (!rm.isInterrupted()) continue;
 
       if (rm.SI != null) {
-        // An unprivileged interruption
-        // Clear SI
+        // When a VM can't execute a command, we duplicate the IC and try executing the same command in the RM.
+        // When RM executes a command that's located in the context of a VM, the argument is converted to an absolute address.
+
+        // Switch to super mode
+        rm.MODE = RealMachine.Mode.S;
+
+        // Convert VMs IC into an absolute address
+        rm.IC = rm.getAbsoluteAddress(vm.IC);
+
+        // Execute the command, now in the RM
+        rm.step();
+
+        // Unprivileged command was executed in the RM, now we can increment the IC on the VM that invoked the execution
+        vm.IC++;
         rm.SI = null;
-
-        // Get an absolute address
-        final String absolute = Utils.precedeZeroes(rm.getAbsoluteAddress(command.getArgument()), 3);
-
-        // Create a modified command
-        final Command cmd = new Command(command.type,
-            Character.getNumericValue(absolute.charAt(0)),
-            Character.getNumericValue(absolute.charAt(1)),
-            Character.getNumericValue(absolute.charAt(2)));
-
-        // ToDo include the new command into command list so it's displayed and we know what's going on
-
-        // Execute the command in the RM
-        rm.execute(cmd);
       } else if (rm.PI != null) {
         // Command execution failed
         // Clear PI
         rm.PI = null;
 
-        // ToDo run program interrupt program
+        // ToDo run PI program
         // ToDo include the new commands into command list so they're displayed and we know what's going on
       } else if (rm.TI <= 0) {
         // Timer too low
 
-        // ToDo run timer interrupt program
+        // ToDo run TI program
         // ToDo include the new commands into command list so they're displayed and we know what's going on
 
         // Reset timer

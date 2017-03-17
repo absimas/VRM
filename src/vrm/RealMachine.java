@@ -1,5 +1,7 @@
 package vrm;
 
+import vrm.exceptions.InvalidArgumentsException;
+import vrm.exceptions.InvalidCommandException;
 import vrm.exceptions.MemoryOutOfBoundsException;
 import vrm.exceptions.UnhandledCommandException;
 
@@ -187,11 +189,8 @@ public class RealMachine extends Machine {
         // Block screen channel
         setChannelBusy(screen.getIndex(), true);
 
-        // Get 10 symbols (2 words) from memory
-        final Word[] output = {memory.get(command.getArgument()), memory.get(command.getArgument() + 1)};
-
         // Output to screen
-        screen.write(output);
+        screen.write(memory.get(command.getArgument()));
 
         // Unblock keyboard channel
         setChannelBusy(screen.getIndex(), false);
@@ -254,7 +253,7 @@ public class RealMachine extends Machine {
         setChannelBusy(externalMemory.getIndex(), false);
         break;
       case HALT:
-        System.exit(1); // ToDo does this work with GUI apps?
+        System.exit(3); // ToDo does this work with GUI apps?
         break;
       case STVM: {
         final int index = command.getArgument();
@@ -382,7 +381,7 @@ public class RealMachine extends Machine {
   }
 
   /**
-   * Gets VM page table at the specified address.
+   * Gets VM page table at the specified address. // ToDo use VM index rather than address to minimise bug probability
    * @param address page table address
    */
   private PageTable getPageTable(int address) {
@@ -391,7 +390,71 @@ public class RealMachine extends Machine {
 
   @Override
   public String toString() {
-    return String.format("VM%d", id);
+    return String.format("RM%d", id);
+  }
+
+  /**
+   * Notes:
+   * - When RM executes a command that's located in the context of a VM, the argument is converted to an absolute address.
+   * @see Machine#step()
+   */
+  @Override
+  public boolean step() throws UnhandledCommandException, InterruptedException {
+    // Fetch Word at IC
+    final Word word;
+    try {
+      word = memory.get(IC);
+    } catch (MemoryOutOfBoundsException e) {
+      e.printStackTrace();
+      throw new RuntimeException(String.format("RM referenced an invalid address when looking for a command at %d!", IC));
+    }
+
+    // Convert Word to Command
+    Command command;
+    try {
+      command = Command.parse(word);
+    } catch (InvalidArgumentsException | InvalidCommandException e) {
+      // IC is pointing to an invalid command
+      e.printStackTrace();
+      throw new RuntimeException(String.format("RM encountered an invalid command: %s!", word));
+    }
+
+    // If this command is located in the VM memory block, create an identical command with an absolute address
+    final int startInclusive = INTERRUPT_TABLE_SIZE + VM_PAGE_TABLES_SIZE;
+    final int endExclusive = startInclusive + MAX_VM_COUNT * VM_MEMORY_SIZE;
+    if (IC >= startInclusive && IC < endExclusive) {
+      command = getAbsoluteCommand(command);
+      // ToDo include the new command into command list so it's displayed and we know what's going on
+    }
+
+    // Execute the command
+    try {
+      execute(command);
+    } catch (MemoryOutOfBoundsException e) {
+      e.printStackTrace();
+      throw new RuntimeException(String.format("RM referenced an invalid address when executing %d!", command));
+    }
+
+    return true;
+  }
+
+  /**
+   * Converts relative command arguments to absolute and returns it all in a newly created {@link Command}.
+   * @param command original command with relative arguments
+   * @return command with absolute arguments
+   */
+  private Command getAbsoluteCommand(Command command) {
+    final String absolute = Utils.precedeZeroes(getAbsoluteAddress(command.getArgument()), 3);
+
+    final int count = command.type.argCount;
+    if (count == 0) return new Command(command.type);
+
+    final int[] args = new int[count];
+    for (int i = 0; i < count; i++) {
+      args[i] = Character.getNumericValue(absolute.charAt(i));
+    }
+
+    return new Command(command.type, args);
   }
 
 }

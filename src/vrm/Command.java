@@ -13,7 +13,7 @@ public class Command {
   public enum Type {
     CR(3), CM(3), AD(3), SB(3), ML(3), MD(3), DV(3), CP(3), JP(3), JE(3), JL(3), JM(3), HALT(0), GD(3), PD(3), RD(3), WD(3), SD(3), STVM(1), SVRG(1), LDRG(1);
 
-    private final int argCount;
+    public final int argCount;
 
     Type(int argCount) {
       this.argCount = argCount;
@@ -94,7 +94,7 @@ public class Command {
     final int[] args;
     for (Type type : Type.values()) {
       if (stringWord.startsWith(type.name())) {
-        args = extractArguments(word, Type.CR);
+        args = extractArguments(word, type);
         return new Command(type, args);
       }
     }

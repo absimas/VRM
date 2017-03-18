@@ -137,18 +137,20 @@ public abstract class Machine {
         break;
       }
       case CP:
-        // Convert
-        final int tmp = TMP.toNumber();
-        final int mem = memory.get(command.getArgument()).toNumber();
-
-        if (tmp == mem) {
+        //"2" > "10" happens because:
+        // https://docs.oracle.com/javase/7/docs/api/java/lang/String.html#compareTo(java.lang.String)
+        // "If there is no index position at which they differ, then the shorter string lexicographically precedes the longer string."
+        //But in our case all strings will be the same length (MAX_LENGTH), so we can ignore this problem.
+        final String tmp = TMP.toString();
+        final String mem = memory.get(command.getArgument()).toString();//?
+        int cp = tmp.compareTo(mem);
+        if (cp == 0) {
           C = Comparison.EQUAL;
-        } else if (tmp > mem) {
+        } else if (cp > 0) {
           C = Comparison.MORE;
         } else {
           C = Comparison.LESS;
         }
-
         break;
       case JP:
         // Overflow

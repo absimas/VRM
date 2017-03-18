@@ -33,7 +33,7 @@ public class PageTable {
 
     final Word[] words = new Word[absolutes.length];
     for (int i = 0; i < words.length; i++) {
-      words[i] = new Word(String.valueOf(absolutes[i]));
+      words[i] = new Word(Utils.precedeZeroes(absolutes[i], Word.LENGTH));
     }
     table = words;
   }

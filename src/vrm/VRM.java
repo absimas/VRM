@@ -98,10 +98,10 @@ public class VRM {
     program.replace(8, "CR011");
     program.replace(9, "CM013");
     program.replace(10, "JP000");
-    program.replace(12, "0");
-    program.replace(13, "1");
-    program.replace(23, "1000");
-    program.replace(24, "HALT");
+    program.replace(12, "00000");
+    program.replace(13, "00001");
+    program.replace(23, "01000");
+    program.replace(24, "HALT ");
 
     // Point IC to the start of the program
     vm.IC = 0;

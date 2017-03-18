@@ -3,11 +3,11 @@ package vrm;
 import java.util.Arrays;
 
 /**
- * Word with a length of {@link #MAX_LENGTH}.
+ * Word with a length of {@link #LENGTH}.
  */
 public class Word {
 
-  public static final int MAX_LENGTH = 5;
+  public static final int LENGTH = 5;
 
   private char[] symbols;
 
@@ -15,17 +15,17 @@ public class Word {
    * Creates an empty word.
    */
   public Word() {
-    symbols = new char[MAX_LENGTH];
+    symbols = new char[LENGTH];
     Arrays.fill(symbols, '0');
   }
 
   /**
-   * Creates a word with at most {@link #MAX_LENGTH} symbols.
-   * @param string string with at most {@link #MAX_LENGTH} symbols
+   * Creates a word with at most {@link #LENGTH} symbols.
+   * @param string string with {@link #LENGTH} symbols
    */
   public Word(String string) {
-    if (string == null || string.length() > MAX_LENGTH) {
-      throw new IllegalArgumentException(String.format("Word length must be between 1 and %d inclusive. Got: %s.", MAX_LENGTH, string));
+    if (string == null || string.length() != LENGTH) {
+      throw new IllegalArgumentException(String.format("Word length must equal to %d. Got: %s.", LENGTH, string));
     }
     this.symbols = string.toCharArray();
   }
@@ -40,10 +40,11 @@ public class Word {
 
   /**
    * Replaces underlying characters.
+   * @param string string with {@link #LENGTH} symbols
    */
   public void replace(String string) {
-    if (string == null || string.length() > MAX_LENGTH) {
-      throw new IllegalArgumentException(String.format("Word length must be between 1 and %d inclusive. Got: %s.", MAX_LENGTH, string));
+    if (string == null || string.length() != LENGTH) {
+      throw new IllegalArgumentException(String.format("Word length must equal to %d. Got: %s.", LENGTH, string));
     }
 
     this.symbols = string.toCharArray();

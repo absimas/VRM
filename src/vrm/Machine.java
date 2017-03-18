@@ -56,16 +56,16 @@ public abstract class Machine {
         final int mem = memory.get(command.getArgument()).toNumber();
 
         // Add
-        final String result = String.valueOf(tmp + mem);
+        final int result = tmp + mem;
 
 
         // Overflow
-        if (result.length() > Word.MAX_LENGTH) {
+        if (String.valueOf(result).length() > Word.LENGTH) {
           throw new NumberOverflowException(String.format("%d + %d = %s which does not fit within a word!", tmp, mem, result));
         }
 
         // Save the result in TMP
-        TMP = new Word(result);
+        TMP = new Word(Utils.precedeZeroes(result, Word.LENGTH));
 
         break;
       }
@@ -75,15 +75,15 @@ public abstract class Machine {
         final int mem = memory.get(command.getArgument()).toNumber();
 
         // Subtract
-        final String result = String.valueOf(tmp - mem);
+        final int result = tmp - mem;
 
         // Overflow
-        if (result.length() > Word.MAX_LENGTH) {
+        if (String.valueOf(result).length() > Word.LENGTH) {
           throw new NumberOverflowException(String.format("%d - %d = %s which does not fit within a word!", tmp, mem, result));
         }
 
         // Save the result in TMP
-        TMP = new Word(result);
+        TMP = new Word(Utils.precedeZeroes(result, Word.LENGTH));
 
         break;
       }
@@ -93,15 +93,15 @@ public abstract class Machine {
         final int mem = memory.get(command.getArgument()).toNumber();
 
         // Multiply
-        final String result = String.valueOf(tmp * mem);
+        final int result = tmp * mem;
 
         // Overflow
-        if (result.length() > Word.MAX_LENGTH) {
+        if (String.valueOf(result).length() > Word.LENGTH) {
           throw new NumberOverflowException(String.format("%d * %d = %s which does not fit within a word!", tmp, mem, result));
         }
 
         // Save the result in TMP
-        TMP = new Word(result);
+        TMP = new Word(Utils.precedeZeroes(result, Word.LENGTH));
 
         break;
       }
@@ -111,10 +111,10 @@ public abstract class Machine {
         final int mem = memory.get(command.getArgument()).toNumber();
 
         // Mod
-        final String result = String.valueOf(tmp % mem);
+        final int result = tmp % mem;
 
         // Save the result in TMP
-        TMP = new Word(result);
+        TMP = new Word(Utils.precedeZeroes(result, Word.LENGTH));
 
         break;
       }
@@ -129,18 +129,18 @@ public abstract class Machine {
         }
 
         // Divide
-        final String result = String.valueOf(tmp / mem);
+        final int result = tmp / mem;
 
         // Save the result in TMP
-        TMP = new Word(result);
+        TMP = new Word(Utils.precedeZeroes(result, Word.LENGTH));
 
         break;
       }
       case CP:
-        //"2" > "10" happens because:
+        // "2" > "10" happens because:
         // https://docs.oracle.com/javase/7/docs/api/java/lang/String.html#compareTo(java.lang.String)
         // "If there is no index position at which they differ, then the shorter string lexicographically precedes the longer string."
-        //But in our case all strings will be the same length (MAX_LENGTH), so we can ignore this problem.
+        // But in our case all strings will be the same length (LENGTH), so we can ignore this problem.
         final String tmp = TMP.toString();
         final String mem = memory.get(command.getArgument()).toString();//?
         int cp = tmp.compareTo(mem);

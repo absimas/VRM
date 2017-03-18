@@ -398,12 +398,6 @@ public class RealMachine extends Machine {
   }
 
   /**
-   * Notes:
-   * - When RM executes a command that's located in the context of a VM, the argument is converted to an absolute address.
-   * @see Machine#step()
-   */
-
-  /**
    * Executes instruction pointed by {@code #IC}.
    * This method returns false if the executing the current instruction caused an interruption.
    * @return true if the instruction was executed successfully, false otherwise.

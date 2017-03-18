@@ -38,4 +38,14 @@ public class PageTable {
     table = words;
   }
 
+  public int[] getRow (int vmID) {
+    int vmSize = RealMachine.VM_MEMORY_SIZE / 10; //size in blocks
+    int startOfRow = vmID * (vmSize);
+    int[] intRow = new int[vmSize];
+    for (int i = 0; i < vmSize ; i++){
+      intRow[i] = table[i + startOfRow].toNumber();
+    }
+    return intRow;
+  }
+
 }

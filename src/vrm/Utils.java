@@ -2,6 +2,10 @@ package vrm;
 
 import java.util.stream.IntStream;
 
+import javafx.concurrent.Task;
+import javafx.concurrent.WorkerStateEvent;
+import javafx.event.EventHandler;
+
 /**
  * Created by Simas on 2017 Mar 04.
  */
@@ -53,6 +57,19 @@ public class Utils {
    */
   public static int[] generateRange(int startInclusive, int endExclusive) {
     return IntStream.range(startInclusive, endExclusive).toArray();
+  }
+
+  public static void delay(Runnable runnable, int millis) throws RuntimeException {
+    final Task<Void> task = new Task<Void>() {
+      @Override
+      protected Void call() throws Exception {
+        Thread.sleep(millis);
+        return null;
+      }
+    };
+    task.setOnSucceeded(event -> runnable.run());
+
+    new Thread(task).start();
   }
 
 }

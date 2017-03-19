@@ -6,7 +6,8 @@ Implementation of Virtual and Real Machines (OS course assignment #2)
 - Everything (comments, ids, variable names, etc.) are in ENGLISH
 - Typical java code rules
  - Class names start with capitals and are CamelCased = *SomeClass*
- - File names are underscore separated = *hello_world.java*
+ - File and resource names are underscore separated = *hello_world.java*
+ - CSS classes and identifiers are dash separated = *command-list.java*
  - Constants (static final) = uppercase, underscore = *SOME_CONSTANT*
  - Variables are CamelCased = *someVariable*
 - Indentation = 2 spaces (not tab)

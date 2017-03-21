@@ -399,15 +399,29 @@ public class RealMachine extends Machine {
 
   /**
    * Executes instruction pointed by {@code #IC}.
-   * This method returns false if the executing the current instruction caused an interruption.
-   * @return true if the instruction was executed successfully, false otherwise.
+   * @return returns the executed instruction
    * @throws UnhandledCommandException when a command cannot be handled in this machine. E.g. STVMx in a VM.
    * @throws InterruptedException when a machine block (e.g. when waiting for a channel) is interrupted
    */
-  public boolean step() throws UnhandledCommandException, InterruptedException {
+  public Command step() throws UnhandledCommandException, InterruptedException {
     // Switch to super mode
     MODE = RealMachine.Mode.S;
 
+    final Command command = stepQuietly();
+
+    // Switch back to user mode
+    MODE = RealMachine.Mode.U;
+
+    return command;
+  }
+
+  /**
+   * Same as {@link #step()} but doesn't modify the {@link #MODE} register.
+   * @return returns the executed instruction
+   * @throws UnhandledCommandException when a command cannot be handled in this machine. E.g. STVMx in a VM.
+   * @throws InterruptedException when a machine block (e.g. when waiting for a channel) is interrupted
+   */
+  public Command stepQuietly() throws UnhandledCommandException, InterruptedException {
     // Fetch Word at IC
     final Word word;
     try {
@@ -443,10 +457,7 @@ public class RealMachine extends Machine {
       throw new RuntimeException(String.format("RM referenced an invalid address when executing %s!", command));
     }
 
-    // Switch back to user mode
-    MODE = RealMachine.Mode.U;
-
-    return true;
+    return command;
   }
 
   /**

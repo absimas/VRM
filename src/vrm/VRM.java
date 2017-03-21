@@ -17,6 +17,8 @@ public class VRM {
     new VRM().vmProgramExample();
   }
 
+  private static final int INTERRUPT_HANDLER_START_ADDRESS = 600;
+
   private final List<String> commands = new ArrayList<>();
 
   private void vmCreationExample() {
@@ -79,9 +81,12 @@ public class VRM {
     // Create a RM with a 1000 word memory
     final RealMachine rm = new RealMachine(new Memory(RealMachine.MEMORY_SIZE));
 
+    // Init interruption handlers
+    interruptionHandlers(rm);
+
     // Imitate VM creation command
-    rm.memory.replace(0, "STVM0");
-    rm.IC = 0;
+    rm.memory.replace(RealMachine.MEMORY_SIZE-1, "STVM0");
+    rm.IC = RealMachine.MEMORY_SIZE-1;
     rm.step();
     final VirtualMachine vm = rm.virtualMachine;
 
@@ -179,20 +184,152 @@ public class VRM {
     }
   }
 
-  private void programInterrupt(RealMachine rm) {
-    // ToDo run PI handler
-    // ToDo include the new commands into command list so they're displayed and we know what's going on
+  /**
+   * Fills {@link RealMachine} memory with interruption handlers as well as stores addresses to these handlers in the first 2 blocks based on interruption indexes:
+   * <pre>
+   * 0.  TI
+   * 1.  Incorrect address - PI
+   * 2.  Incorrect operation - PI
+   * 3.  Overflow - PI
+   * 4.  Incorrect assignment - PI
+   * 5.  GD - SI
+   * 6.  PD - SI
+   * 7.  RD - SI
+   * 8.  WD - SI
+   * 9.  SD - SI
+   * 10. HALT - SI
+   * 11. 1st channel work end - IOI
+   * 12. 2nd channel work end - IOI
+   * 13. 3rd channel work end - IOI
+   * </pre>
+   */
+  @SuppressWarnings("UnusedAssignment")
+  private void interruptionHandlers(RealMachine rm) {
+    // 0. TI
+    int index = 0;
+    int address = INTERRUPT_HANDLER_START_ADDRESS;
+    Word[] words = new Word[] { new Word("PD" + Utils.precedeZeroes(address+2, Word.LENGTH-2)), new Word("STVM0"), new Word("TI   ") };
+    rm.memory.replace(address, words);
+    rm.memory.replace(index++, new Word(Utils.precedeZeroes(address, Word.LENGTH)));
 
-    // Clear PI
-    rm.PI = RealMachine.ProgramInterrupt.NONE;
+    // 1. Incorrect address - PI
+    address += words.length;
+    words = new Word[] { new Word("PD" + Utils.precedeZeroes(address+2, Word.LENGTH-2)), new Word("STVM0"), new Word("AdrPI") };
+    rm.memory.replace(address, words);
+    rm.memory.replace(index++, new Word(Utils.precedeZeroes(address, Word.LENGTH)));
+
+    // 2. Incorrect operation - PI
+    index++;
+    address += words.length;
+    words = new Word[] { new Word("PD" + Utils.precedeZeroes(address+2, Word.LENGTH-2)), new Word("STVM0"), new Word("OprPI") };
+    rm.memory.replace(address, words);
+    rm.memory.replace(index++, new Word(Utils.precedeZeroes(address, Word.LENGTH)));
+
+    // 3. Overflow - PI
+    address += words.length;
+    words = new Word[] { new Word("PD" + Utils.precedeZeroes(address+2, Word.LENGTH-2)), new Word("STVM0"), new Word("OFLOW") };
+    rm.memory.replace(address, words);
+    rm.memory.replace(index++, new Word(Utils.precedeZeroes(address, Word.LENGTH)));
+
+    // 4. Incorrect assignment - PI
+    address += words.length;
+    words = new Word[] { new Word("PD" + Utils.precedeZeroes(address+2, Word.LENGTH-2)), new Word("STVM0"), new Word("AsiPI") };
+    rm.memory.replace(address, words);
+    rm.memory.replace(index++, new Word(Utils.precedeZeroes(address, Word.LENGTH)));
+
+    // 5-10. Super interrupts. They don't have a custom handler.
+
+    // 11. 1st channel work end - IOI
+    address += words.length;
+    index = 11;
+    words = new Word[] { new Word("PD" + Utils.precedeZeroes(address+2, Word.LENGTH-2)), new Word("STVM0"), new Word("1cIOI") };
+    rm.memory.replace(address, words);
+    rm.memory.replace(index++, new Word(Utils.precedeZeroes(address, Word.LENGTH)));
+
+    // 12. 2nd channel work end - IOI
+    address += words.length;
+    words = new Word[] { new Word("PD" + Utils.precedeZeroes(address+2, Word.LENGTH-2)), new Word("STVM0"), new Word("2cIOI") };
+    rm.memory.replace(address, words);
+    rm.memory.replace(index++, new Word(Utils.precedeZeroes(address, Word.LENGTH)));
+
+    // 13. 2nd channel work end - IOI
+    address += words.length;
+    words = new Word[] { new Word("PD" + Utils.precedeZeroes(address+2, Word.LENGTH-2)), new Word("STVM0"), new Word("3cIOI") };
+    rm.memory.replace(address, words);
+    rm.memory.replace(index++, new Word(Utils.precedeZeroes(address, Word.LENGTH)));
   }
 
-  private void timerInterrupt(RealMachine rm) {
-    // ToDo run TI handler
+  private void timerInterrupt(RealMachine rm) throws InterruptedException {
+    // Get handler address
+    int address = rm.memory.get(0).toNumber();
+
+    // Set the handler's address as IC
+    rm.IC = address;
+
     // ToDo include the new commands into command list so they're displayed and we know what's going on
+
+    // Super mode
+    rm.MODE = RealMachine.Mode.S;
+
+    Command command = rm.stepQuietly();
+    while (command.type != Command.Type.STVM && command.type != Command.Type.HALT) {
+      // ToDo wait here until > is clicked
+      // Move to the next instruction
+      rm.IC++;
+      command = rm.step();
+    }
+
+    // Reset mode
+    rm.MODE = RealMachine.Mode.U;
 
     // Reset TI
     rm.TI = RealMachine.DEFAULT_TIMER;
+  }
+
+  private void programInterrupt(RealMachine rm) throws InterruptedException {
+    // Get handler index
+    int address;
+    switch (rm.PI) {
+      case INV_ADDRESS:
+        address = 1;
+        break;
+      case INV_OP:
+        address = 2;
+        break;
+      case OVERFLOW:
+        address = 3;
+        break;
+      case INV_ASSIGN:
+        address = 4;
+        break;
+      default:
+        throw new IllegalStateException("PI handler called without a proper PI value set!");
+    }
+
+    // Get handler address
+    address = rm.memory.get(address).toNumber();
+
+    // Set the handler's address as IC
+    rm.IC = address;
+
+    // ToDo include the new commands into command list so they're displayed and we know what's going on
+
+    // Super mode
+    rm.MODE = RealMachine.Mode.S;
+
+    Command command = rm.stepQuietly();
+    while (command.type != Command.Type.STVM && command.type != Command.Type.HALT) {
+      // ToDo wait here until > is clicked
+      // Move to the next instruction
+      rm.IC++;
+      command = rm.step();
+    }
+
+    // Reset mode
+    rm.MODE = RealMachine.Mode.U;
+
+    // Clear PI
+    rm.PI = RealMachine.ProgramInterrupt.NONE;
   }
 
   /**
@@ -202,11 +339,11 @@ public class VRM {
    * @param failedIC IC value pointing to the failing command
    */
   private void superInterrupt(RealMachine rm, int failedIC) throws InterruptedException {
-    // ToDo run SI handler
-    // ToDo include the new commands into command list so they're displayed and we know what's going on
 
     // Convert the saved IC into an absolute address
     rm.IC = rm.getAbsoluteAddress(failedIC);
+
+    // ToDo include the new commands into command list so they're displayed and we know what's going on
 
     // Execute the command, now in the RM
     rm.step();
@@ -216,12 +353,46 @@ public class VRM {
     rm.SI = RealMachine.SuperInterrupt.NONE;
   }
 
-  private void ioiInterrupt(RealMachine rm) {
-    // ToDo I/O interruption handler
+  private void ioiInterrupt(RealMachine rm) throws InterruptedException {
+    // Handle all channels
+    ioiInterrupt(rm, 1);
+    ioiInterrupt(rm, 2);
+    ioiInterrupt(rm, 3);
+  }
+
+  /**
+   * @param channel channel that finished its work ([1..3])
+   */
+  private void ioiInterrupt(RealMachine rm, int channel) throws InterruptedException {
+    if (!Utils.checkFlag(rm.IOI, channel)) return;
+
+    // Get handler index
+    int address = 10 + channel;
+
+    // Get handler address
+    address = rm.memory.get(address).toNumber();
+
+    // Set the handler's address as IC
+    rm.IC = address;
+
     // ToDo include the new commands into command list so they're displayed and we know what's going on
 
-    // Clear IOI
-    rm.IOI = 0;
+    // Super mode
+    rm.MODE = RealMachine.Mode.S;
+
+    Command command = rm.stepQuietly();
+    while (command.type != Command.Type.STVM && command.type != Command.Type.HALT) {
+      // ToDo wait here until > is clicked
+      // Move to the next instruction
+      rm.IC++;
+      command = rm.step();
+    }
+
+    // Reset mode
+    rm.MODE = RealMachine.Mode.U;
+    
+    // Clear given channel from bitmask
+    Utils.clearFlag(rm.IOI, channel);
   }
 
 }

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.geometry.Insets?>
+<fx:root
+	xmlns:fx="http://javafx.com/fxml"
+	type="javafx.scene.layout.HBox"
+	stylesheets="@styles/styles.css"
+	alignment="CENTER">
+	<Label
+		fx:id="label"
+		prefWidth="50"
+		alignment="CENTER_RIGHT">
+		<padding>
+			<Insets right="5.0"/>
+		</padding>
+	</Label>
+
+	<TextField
+		fx:id="field"
+		styleClass="machine-register-field"
+		prefWidth="60"
+		alignment="CENTER_RIGHT"
+		editable="false"
+		focusTraversable="false">
+	</TextField>
+</fx:root>

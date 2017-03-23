@@ -1,10 +1,10 @@
-package ui;
+package vrm;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 /**
- * Memory {@link javafx.scene.control.TableView} item.
+ * Block of {@link Word}s.
  */
 public class MemoryBlock {
 
@@ -15,21 +15,16 @@ public class MemoryBlock {
   /**
    * Words within this memory block.
    */
-  private ObservableList<String> words;
+  private final ObservableList<Word> words;
 
   /**
    * Required c-tor
    */
   public MemoryBlock() {
-
+    words = FXCollections.observableArrayList();
   }
 
-  public MemoryBlock(int index, ObservableList<String> words) {
-    this.index = index;
-    this.words = words;
-  }
-
-  public MemoryBlock(int index, String... words) {
+  public MemoryBlock(int index, Word... words) {
     this.index = index;
     this.words = FXCollections.observableArrayList(words);
   }
@@ -42,12 +37,8 @@ public class MemoryBlock {
     this.index = index;
   }
 
-  public ObservableList<String> getWords() {
+  public ObservableList<Word> getWords() {
     return words;
-  }
-
-  public void setWords(ObservableList<String> words) {
-    this.words = words;
   }
 
 }

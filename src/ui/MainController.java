@@ -20,7 +20,9 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.util.Callback;
+import vrm.MemoryBlock;
 import vrm.Utils;
+import vrm.VRM;
 
 public class MainController implements Initializable {
 
@@ -34,14 +36,15 @@ public class MainController implements Initializable {
   private TextField input, output;
   @FXML
   private Button outputPush;
+  private final VRM vrm;
 
   private int vmIndex = -1;
 
   /**
    * Required c-tor
    */
-  public MainController() {
-
+  public MainController() throws InterruptedException {
+    vrm = new VRM();
   }
 
   @Override
@@ -88,7 +91,7 @@ public class MainController implements Initializable {
       final int index = i;
       final TableColumn<MemoryBlock, String> column = new TableColumn<>(String.valueOf(i));
       // Value: MemoryBlock#words[i] (String)
-      column.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(param.getValue().getWords().get(index)));
+      column.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(param.getValue().getWords().get(index).toString()));
 
       // Cell style is based on the current VM index
       column.setCellFactory(new Callback<TableColumn<MemoryBlock, String>, TableCell<MemoryBlock, String>>() {
@@ -120,12 +123,13 @@ public class MainController implements Initializable {
     // Assign columns to table
     memoryTable.getColumns().setAll(columns);
 
-    // Add dummy items
-    final MemoryBlock[] memory = new MemoryBlock[100];
-    for (int i = 0; i < 100; i++) {
-      memory[i] = new MemoryBlock(i, FXCollections.observableArrayList("JM024", "CM011", "CR013", "CM012", "CR011", "PD013", "CR013", "AD012", "CP023", "JM024"));
+    // Wrap RM memory (1000 Words) with MemoryBlocks (10 Words each)
+    final ObservableList<MemoryBlock> blocks = FXCollections.observableArrayList();
+    for (int i = 0; i < vrm.realMachine.memory.size() / 10; i++) {
+      blocks.add(new MemoryBlock(i, vrm.realMachine.memory.get(i * 10, 10)));
     }
-    memoryTable.getItems().setAll(memory);
+
+    memoryTable.getItems().setAll(blocks);
 
     // Delay a forced scroll so the scrollbar takes sufficient space in the TableView
     Utils.delay(() -> memoryTable.scrollTo(0), 1);

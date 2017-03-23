@@ -16,7 +16,8 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.cell.PropertyValueFactory?>
-<?import ui.MemoryBlock?>
+<?import vrm.MemoryBlock?>
+<?import vrm.Word?>
 <BorderPane
 	xmlns="http://javafx.com/javafx/8.0.112"
 	xmlns:fx="http://javafx.com/fxml/1"
@@ -144,30 +145,7 @@
 					</cellValueFactory>
 				</TableColumn>
 			</columns>
-
-			<items>
-				<FXCollections fx:factory="observableArrayList">
-					<MemoryBlock
-						index="1">
-						<words>
-							<FXCollections fx:factory="observableArrayList">
-								<String fx:value="JM024"/>
-								<String fx:value="CM011"/>
-								<String fx:value="CR013"/>
-								<String fx:value="CM012"/>
-								<String fx:value="CR011"/>
-								<String fx:value="PD013"/>
-								<String fx:value="CR013"/>
-								<String fx:value="AD012"/>
-								<String fx:value="CP023"/>
-								<String fx:value="JM024"/>
-							</FXCollections>
-						</words>
-					</MemoryBlock>
-				</FXCollections>
-			</items>
 		</TableView>
-
 	</center>
 
 	<bottom>

@@ -1,12 +1,10 @@
 package vrm;
 
 import com.sun.istack.internal.NotNull;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Spliterator;
 import java.util.function.Consumer;
-
 import vrm.exceptions.MemoryOutOfBoundsException;
 
 /**
@@ -14,6 +12,7 @@ import vrm.exceptions.MemoryOutOfBoundsException;
  */
 public class Memory implements Iterable<Word> {
 
+  // TODO USE OBSERVABLE LISTS
   private final List<Word> words;
 
   /**

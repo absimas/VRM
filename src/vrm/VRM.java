@@ -219,26 +219,26 @@ public class VRM {
 
     // 1. Incorrect address - PI
     address += words.length;
-    words = new Word[] { new Word("PD" + Utils.precedeZeroes(address+2, Word.LENGTH-2)), new Word("STVM0"), new Word("AdrPI") };
+    words = new Word[] { new Word("PD" + Utils.precedeZeroes(address+2, Word.LENGTH-2)), new Word("STVM0"), new Word("PI_AD") };
     realMachine.memory.replace(address, words);
     realMachine.memory.replace(index++, new Word(Utils.precedeZeroes(address, Word.LENGTH)));
 
     // 2. Incorrect operation - PI
     index++;
     address += words.length;
-    words = new Word[] { new Word("PD" + Utils.precedeZeroes(address+2, Word.LENGTH-2)), new Word("STVM0"), new Word("OprPI") };
+    words = new Word[] { new Word("PD" + Utils.precedeZeroes(address+2, Word.LENGTH-2)), new Word("STVM0"), new Word("PI_OP") };
     realMachine.memory.replace(address, words);
     realMachine.memory.replace(index++, new Word(Utils.precedeZeroes(address, Word.LENGTH)));
 
     // 3. Overflow - PI
     address += words.length;
-    words = new Word[] { new Word("PD" + Utils.precedeZeroes(address+2, Word.LENGTH-2)), new Word("STVM0"), new Word("OFLOW") };
+    words = new Word[] { new Word("PD" + Utils.precedeZeroes(address+2, Word.LENGTH-2)), new Word("STVM0"), new Word("PI_OF") };
     realMachine.memory.replace(address, words);
     realMachine.memory.replace(index++, new Word(Utils.precedeZeroes(address, Word.LENGTH)));
 
     // 4. Incorrect assignment - PI
     address += words.length;
-    words = new Word[] { new Word("PD" + Utils.precedeZeroes(address+2, Word.LENGTH-2)), new Word("STVM0"), new Word("AsiPI") };
+    words = new Word[] { new Word("PD" + Utils.precedeZeroes(address+2, Word.LENGTH-2)), new Word("STVM0"), new Word("PI_AS") };
     realMachine.memory.replace(address, words);
     realMachine.memory.replace(index++, new Word(Utils.precedeZeroes(address, Word.LENGTH)));
 
@@ -247,19 +247,19 @@ public class VRM {
     // 11. 1st channel work end - IOI
     address += words.length;
     index = 11;
-    words = new Word[] { new Word("PD" + Utils.precedeZeroes(address+2, Word.LENGTH-2)), new Word("STVM0"), new Word("1cIOI") };
+    words = new Word[] { new Word("PD" + Utils.precedeZeroes(address+2, Word.LENGTH-2)), new Word("STVM0"), new Word("IOI_1") };
     realMachine.memory.replace(address, words);
     realMachine.memory.replace(index++, new Word(Utils.precedeZeroes(address, Word.LENGTH)));
 
     // 12. 2nd channel work end - IOI
     address += words.length;
-    words = new Word[] { new Word("PD" + Utils.precedeZeroes(address+2, Word.LENGTH-2)), new Word("STVM0"), new Word("2cIOI") };
+    words = new Word[] { new Word("PD" + Utils.precedeZeroes(address+2, Word.LENGTH-2)), new Word("STVM0"), new Word("IOI_2") };
     realMachine.memory.replace(address, words);
     realMachine.memory.replace(index++, new Word(Utils.precedeZeroes(address, Word.LENGTH)));
 
     // 13. 2nd channel work end - IOI
     address += words.length;
-    words = new Word[] { new Word("PD" + Utils.precedeZeroes(address+2, Word.LENGTH-2)), new Word("STVM0"), new Word("3cIOI") };
+    words = new Word[] { new Word("PD" + Utils.precedeZeroes(address+2, Word.LENGTH-2)), new Word("STVM0"), new Word("IOI_3") };
     realMachine.memory.replace(address, words);
     realMachine.memory.replace(index++, new Word(Utils.precedeZeroes(address, Word.LENGTH)));
   }

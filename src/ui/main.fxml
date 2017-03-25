@@ -16,8 +16,6 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.cell.PropertyValueFactory?>
-<?import vrm.MemoryBlock?>
-<?import vrm.Word?>
 <BorderPane
 	xmlns="http://javafx.com/javafx/8.0.112"
 	xmlns:fx="http://javafx.com/fxml/1"
@@ -29,30 +27,14 @@
 	prefWidth="1000.0">
 	<left>
 			<ListView
-				fx:id="commandList"
+				fx:id="commandLog"
 				styleClass="command-list"
 				prefWidth="100.0"
 				BorderPane.alignment="CENTER">
+				<!--Initially, the list contains 1 empty item to prevent drawing an empty (white) list-->
 				<items>
 					<FXCollections fx:factory="observableArrayList">
-						<String fx:value="PD013"/>
-						<String fx:value="CR013"/>
-						<String fx:value="AD012"/>
-						<String fx:value="CP023"/>
-						<String fx:value="JM024"/>
-						<String fx:value="CM011"/>
-						<String fx:value="CR013"/>
-						<String fx:value="CM012"/>
-						<String fx:value="CR011"/>
-						<String fx:value="PD013"/>
-						<String fx:value="CR013"/>
-						<String fx:value="AD012"/>
-						<String fx:value="CP023"/>
-						<String fx:value="JM024"/>
-						<String fx:value="CM011"/>
-						<String fx:value="CR013"/>
-						<String fx:value="CM012"/>
-						<String fx:value="CR011"/>
+						<String/>
 					</FXCollections>
 				</items>
 			</ListView>

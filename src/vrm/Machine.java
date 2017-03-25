@@ -1,5 +1,6 @@
 package vrm;
 
+import javafx.collections.ObservableList;
 import vrm.exceptions.MemoryOutOfBoundsException;
 import vrm.exceptions.NumberOverflowException;
 import vrm.exceptions.UnhandledCommandException;
@@ -20,6 +21,10 @@ public abstract class Machine {
    * Memory.
    */
   public final Memory memory;
+  /**
+   * List containing all executed commands. This is managed for UI purposes only.
+   */
+  protected final ObservableList<String> commandLog;
 
   /**
    * Temporary. Size word.
@@ -30,7 +35,8 @@ public abstract class Machine {
    */
   public Comparison C = Comparison.EQUAL;
 
-  protected Machine(Memory memory) {
+  protected Machine(ObservableList<String> commandLog, Memory memory) {
+    this.commandLog = commandLog;
     this.memory = memory;
   }
 
@@ -42,7 +48,7 @@ public abstract class Machine {
    * @throws NumberFormatException when either {@link #TMP} or referenced memory contains something that's not a number
    * @throws NumberOverflowException when number arithmetic result does not fit in a word
    */
-  protected void execute(Command command) throws UnhandledCommandException, MemoryOutOfBoundsException, NumberFormatException, NumberOverflowException, InterruptedException {
+  protected synchronized void execute(Command command) throws UnhandledCommandException, MemoryOutOfBoundsException, NumberFormatException, NumberOverflowException, InterruptedException {
     switch (command.type) {
       case CR:
         TMP = memory.get(command.getArgument());

@@ -12,7 +12,6 @@ import vrm.exceptions.MemoryOutOfBoundsException;
  */
 public class Memory implements Iterable<Word> {
 
-  // TODO USE OBSERVABLE LISTS
   private final List<Word> words;
 
   /**

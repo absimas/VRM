@@ -1,5 +1,6 @@
 package vrm;
 
+import javafx.collections.ObservableList;
 import vrm.exceptions.MemoryOutOfBoundsException;
 import vrm.exceptions.UnhandledCommandException;
 
@@ -22,14 +23,17 @@ public class VirtualMachine extends Machine {
    */
   private final int id = VM_IDS++;
 
-  public VirtualMachine(RealMachine realMachine, Memory memory) {
-    super(memory);
+  public VirtualMachine(ObservableList<String> commandLog, RealMachine realMachine, Memory memory) {
+    super(commandLog, memory);
     this.realMachine = realMachine;
   }
 
   @Override
-  protected void execute(Command command) throws UnhandledCommandException, MemoryOutOfBoundsException, InterruptedException {
+  protected synchronized void execute(Command command) throws UnhandledCommandException, MemoryOutOfBoundsException, InterruptedException {
+    // Log command
+    commandLog.add(command.toString());
     System.out.println("Execute " + command + " in " + this);
+
     // Commands executed in a VM must have an x argument of 0
     if (command.x != 0) {
       throw new MemoryOutOfBoundsException(String.format("Invalid command address encountered when executing %s!", command));
@@ -62,6 +66,8 @@ public class VirtualMachine extends Machine {
         super.execute(command);
         break;
     }
+
+    wait();
   }
 
   @Override

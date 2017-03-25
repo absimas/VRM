@@ -2,6 +2,7 @@ package vrm;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import ui.MainController;
 import vrm.exceptions.InvalidArgumentsException;
 import vrm.exceptions.InvalidCommandException;
 import vrm.exceptions.MemoryOutOfBoundsException;
@@ -12,15 +13,16 @@ import vrm.exceptions.MemoryOutOfBoundsException;
 @SuppressWarnings("UnnecessaryLocalVariable")
 public class VRM {
 
-  public static void main(String[] args) throws InterruptedException {
-    new VRM();
-  }
-
   private static final int INTERRUPT_HANDLER_START_ADDRESS = 600;
 
-  public final ObservableList<String> commands = FXCollections.observableArrayList();
+  /**
+   * List containing all executed commands. This is managed for UI purposes only.
+   */
+  public final ObservableList<String> commandLog = FXCollections.observableArrayList();
   public final RealMachine realMachine;
-  public final VirtualMachine virtualMachine;
+  private final MainController ui;
+
+  public VirtualMachine virtualMachine;
 
 //  private void vmCreationExample() {
 //    final RealMachine rm = new RealMachine(new Memory(RealMachine.MEMORY_SIZE));
@@ -78,28 +80,35 @@ public class VRM {
 //    }
 //  }
 
-  public VRM() throws InterruptedException {
+  /**
+   * Create a VRM object that performs the CPU algorithm and contains all the registers.
+   * {@link #realMachine} and {@link #virtualMachine} values are public for viewing but should not be modified from outside.
+   * @param mainController UI controller that's called when redrawing is necessary.
+   */
+  public VRM(MainController mainController) throws InterruptedException {
+    ui = mainController;
+
     // Create a RM with a 1000 word memory
-    realMachine = new RealMachine(new Memory(RealMachine.MEMORY_SIZE));
+    realMachine = new RealMachine(commandLog, new Memory(RealMachine.MEMORY_SIZE));
 
     // Init interruption handlers
     interruptionHandlers();
+  }
 
+  public void begin() throws InterruptedException {
     // Imitate VM creation command
     realMachine.memory.replace(RealMachine.MEMORY_SIZE-1, "STVM0");
     realMachine.IC = RealMachine.MEMORY_SIZE-1;
     realMachine.step();
     virtualMachine = realMachine.virtualMachine;
-  }
 
-  public void vmProgramExample() throws InterruptedException {
     // Store a program (fibonacci less than 1000) in VM memory
     final Memory program = virtualMachine.memory;
     program.replace(0, "PD013");
     program.replace(1, "CR013");
     program.replace(2, "AD012");
-    program.replace(3, "CP023");
-    program.replace(4, "JM024");
+    program.replace(3, "CP014");
+    program.replace(4, "JM015");
     program.replace(5, "CM011");
     program.replace(6, "CR013");
     program.replace(7, "CM012");
@@ -108,8 +117,8 @@ public class VRM {
     program.replace(10, "JP000");
     program.replace(12, "00000");
     program.replace(13, "00001");
-    program.replace(23, "01000");
-    program.replace(24, "HALT ");
+    program.replace(14, "01000");
+    program.replace(15, "HALT ");
 
     // Point IC to the start of the program
     virtualMachine.IC = 0;
@@ -185,7 +194,7 @@ public class VRM {
         ioiInterrupt();
       }
 
-      wait();
+      ui.draw();
     }
   }
 
@@ -271,14 +280,11 @@ public class VRM {
     // Set the handler's address as IC
     realMachine.IC = address;
 
-    // ToDo include the new commands into command list so they're displayed and we know what's going on
-
     // Super mode
     realMachine.MODE = RealMachine.Mode.S;
 
     Command command = realMachine.stepQuietly();
     while (command.type != Command.Type.STVM && command.type != Command.Type.HALT) {
-      wait();
       // Move to the next instruction
       realMachine.IC++;
       command = realMachine.step();
@@ -317,14 +323,11 @@ public class VRM {
     // Set the handler's address as IC
     realMachine.IC = address;
 
-    // ToDo include the new commands into command list so they're displayed and we know what's going on
-
     // Super mode
     realMachine.MODE = RealMachine.Mode.S;
 
     Command command = realMachine.stepQuietly();
     while (command.type != Command.Type.STVM && command.type != Command.Type.HALT) {
-      wait();
       // Move to the next instruction
       realMachine.IC++;
       command = realMachine.step();
@@ -346,8 +349,6 @@ public class VRM {
 
     // Convert the saved IC into an absolute address
     realMachine.IC = realMachine.getAbsoluteAddress(failedIC);
-
-    // ToDo include the new commands into command list so they're displayed and we know what's going on
 
     // Execute the command, now in the RM
     realMachine.step();
@@ -379,14 +380,11 @@ public class VRM {
     // Set the handler's address as IC
     realMachine.IC = address;
 
-    // ToDo include the new commands into command list so they're displayed and we know what's going on
-
     // Super mode
     realMachine.MODE = RealMachine.Mode.S;
 
     Command command = realMachine.stepQuietly();
     while (command.type != Command.Type.STVM && command.type != Command.Type.HALT) {
-      wait();
       // Move to the next instruction
       realMachine.IC++;
       command = realMachine.step();
@@ -397,6 +395,21 @@ public class VRM {
     
     // Clear given channel from bitmask
     Utils.clearFlag(realMachine.IOI, channel);
+  }
+
+  /**
+   * Interrupts a wait command and continues VRM execution.
+   */
+  public synchronized void forward() {
+    notify();
+
+    synchronized (realMachine) {
+      realMachine.notify();
+    }
+    if (virtualMachine == null) return;
+    synchronized (virtualMachine) {
+      virtualMachine.notify();
+    }
   }
 
 }

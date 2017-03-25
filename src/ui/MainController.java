@@ -2,8 +2,10 @@ package ui;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.fxml.FXML;
@@ -27,7 +29,7 @@ import vrm.VRM;
 public class MainController implements Initializable {
 
   @FXML
-  private ListView<String> commandList;
+  private ListView<String> commandLog;
   @FXML
   private TableView<MemoryBlock> memoryTable;
   @FXML
@@ -36,15 +38,36 @@ public class MainController implements Initializable {
   private TextField input, output;
   @FXML
   private Button outputPush;
-  private final VRM vrm;
 
+  private final VRM vrm;
   private int vmIndex = -1;
 
   /**
    * Required c-tor
    */
   public MainController() throws InterruptedException {
-    vrm = new VRM();
+    vrm = new VRM(this);
+    vrm.commandLog.addListener((ListChangeListener<String>) c -> draw());
+
+    // Execute VRM on a different thread so we can interrupt the waits
+    new Thread(() -> {
+      try {
+        vrm.begin();
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      }
+    }).start();
+
+    // Imitate looping
+    Runnable r = new Runnable() {
+      @Override
+      public void run() {
+        vrm.forward();
+        Utils.delay(this, 100);
+      }
+    };
+
+    Utils.delay(r, 100);
   }
 
   @Override
@@ -57,13 +80,11 @@ public class MainController implements Initializable {
   }
 
   private void initializeCommandList() {
-    commandList.setCellFactory(param -> new CommandCell());
-    commandList.getSelectionModel().select(13);
-    commandList.scrollTo(13);
-
     // Consume mouse and keyboard clicks but retain the ability to scroll.
-    commandList.addEventFilter(MouseEvent.MOUSE_PRESSED, Event::consume);
-    commandList.addEventFilter(KeyEvent.ANY, Event::consume);
+    commandLog.addEventFilter(MouseEvent.MOUSE_PRESSED, Event::consume);
+    commandLog.addEventFilter(KeyEvent.ANY, Event::consume);
+
+    // Initially, the list contains 1 empty item to prevent drawing an empty (white) list
   }
 
   private void initializeMemoryTable() {
@@ -105,10 +126,10 @@ public class MainController implements Initializable {
 
               // Clear specific style
               getStyleClass().removeAll("vm-cell");
-              if (getVMIndex() == -1) return;
+              if (vrm.realMachine.getVirtualMachineId() == -1) return;
 
               // Add vm-cell style class to all cells that are within the VM's memory
-              final int startInclusive = 7 + getVMIndex() * 10, endExclusive = startInclusive + 10;
+              final int startInclusive = 7 + vrm.realMachine.getVirtualMachineId() * 10, endExclusive = startInclusive + 10;
               if (getIndex() >= startInclusive && getIndex() < endExclusive) {
                 getStyleClass().add("vm-cell");
               }
@@ -135,15 +156,13 @@ public class MainController implements Initializable {
     Utils.delay(() -> memoryTable.scrollTo(0), 1);
   }
 
-  public void setVMIndex(int index) {
-    vmIndex = index;
-
-    // Refresh TableView cells
-    memoryTable.refresh();
-  }
-
-  public int getVMIndex() {
-    return vmIndex;
+  public void draw() {
+    // Execute drawing on the UI thread
+    Platform.runLater(() -> {
+      commandLog.getItems().setAll(vrm.commandLog);
+      commandLog.scrollTo(commandLog.getItems().size());
+      memoryTable.refresh();
+    });
   }
 
 }

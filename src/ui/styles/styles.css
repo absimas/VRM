@@ -3,19 +3,6 @@
   -fx-selection-bar-non-focused: #0096c9;
 }
 
-.command-list .list-cell {
-  -fx-border-width: 1 1 0 1;
-  -fx-border-color: #000;
-}
-
-.command-list .last-cell {
-  -fx-border-width: 1 1 1 1;
-}
-
-.command-list .empty-cell {
-  -fx-border-width: 0 1 1 1;
-}
-
 .memory-table {
   -fx-background-color: -fx-outer-border, -fx-inner-border, -fx-body-color;
   -fx-background-insets: 0, 1, 2;

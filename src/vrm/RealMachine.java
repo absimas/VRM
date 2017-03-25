@@ -2,6 +2,7 @@ package vrm;
 
 import com.sun.istack.internal.NotNull;
 
+import javafx.collections.ObservableList;
 import vrm.exceptions.InvalidArgumentsException;
 import vrm.exceptions.InvalidCommandException;
 import vrm.exceptions.MemoryOutOfBoundsException;
@@ -137,8 +138,8 @@ public class RealMachine extends Machine {
    */
   public VirtualMachine virtualMachine;
 
-  public RealMachine(Memory memory) {
-    super(memory);
+  public RealMachine(ObservableList<String> commandLog, Memory memory) {
+    super(commandLog, memory);
   }
 
   /**
@@ -163,12 +164,16 @@ public class RealMachine extends Machine {
   }
 
   @Override
-  protected void execute(Command command) throws UnhandledCommandException, MemoryOutOfBoundsException, InterruptedException {
+  protected synchronized void execute(Command command) throws UnhandledCommandException, MemoryOutOfBoundsException, InterruptedException {
+    // Log command
+    commandLog.add(command.toString());
     System.out.println("Execute " + command + " in " + this);
+
     switch (command.type) {
       case GD:
         // Block until keyboard is free
         if (isChannelBusy(keyboard.getIndex())) {
+          // ToDo test?
           wait();
         }
 
@@ -189,6 +194,7 @@ public class RealMachine extends Machine {
       case PD:
         // Block until screen is free
         if (isChannelBusy(screen.getIndex())) {
+          // ToDo test?
           wait();
         }
 
@@ -204,6 +210,7 @@ public class RealMachine extends Machine {
       case RD: {
         // Block until external memory is free
         if (isChannelBusy(externalMemory.getIndex())) {
+          // ToDo test?
           wait();
         }
 
@@ -225,6 +232,7 @@ public class RealMachine extends Machine {
       case WD: {
         // Block until external memory is free
         if (isChannelBusy(externalMemory.getIndex())) {
+          // ToDo test?
           wait();
         }
 
@@ -247,6 +255,7 @@ public class RealMachine extends Machine {
       case SD:
         // Block until external memory is free
         if (isChannelBusy(externalMemory.getIndex())) {
+          // ToDo test?
           wait();
         }
 
@@ -259,7 +268,7 @@ public class RealMachine extends Machine {
         setChannelBusy(externalMemory.getIndex(), false);
         break;
       case HALT:
-        System.exit(3); // ToDo does this work with GUI apps?
+        System.exit(3);
         break;
       case STVM: {
         final int index = command.getArgument();
@@ -267,7 +276,7 @@ public class RealMachine extends Machine {
           throw new IllegalArgumentException(String.format("Index %d exceeds the maximum VM count!", index));
         }
 
-        VirtualMachine vm = virtualMachines[index];
+        final VirtualMachine vm = virtualMachines[index];
 
         // 1. Restore VM registers
         if (vm != null) {
@@ -297,7 +306,7 @@ public class RealMachine extends Machine {
           memory.replace(vmPageTableOffset, vmPageTable.table);
 
           // Create VM
-          virtualMachines[index] = new VirtualMachine(this, vmMemory);
+          virtualMachines[index] = new VirtualMachine(commandLog, this, vmMemory);
         }
         // Reference newly created/resumed VM as the current one
         virtualMachine = virtualMachines[index];
@@ -335,6 +344,8 @@ public class RealMachine extends Machine {
       default:
         super.execute(command);
     }
+
+    wait();
   }
 
   /**
@@ -446,7 +457,6 @@ public class RealMachine extends Machine {
     final int endExclusive = startInclusive + MAX_VM_COUNT * VM_MEMORY_SIZE;
     if (IC >= startInclusive && IC < endExclusive) {
       command = getAbsoluteCommand(command);
-      // ToDo include the new command into command list so it's displayed and we know what's going on
     }
 
     // Execute the command
@@ -477,6 +487,19 @@ public class RealMachine extends Machine {
     }
 
     return new Command(command.type, args);
+  }
+
+  /**
+   * Get the current VM id.
+   * @return current VM id or -1 if there isn't any
+   */
+  public int getVirtualMachineId() {
+    if (virtualMachine == null) return -1;
+    for (int i = 0; i < virtualMachines.length; i++) {
+      if (virtualMachines[i] == virtualMachine) return i;
+    }
+
+    throw new IllegalStateException("Current VM not found in the VM list!");
   }
 
 }

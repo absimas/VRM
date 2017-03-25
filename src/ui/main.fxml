@@ -16,6 +16,7 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.cell.PropertyValueFactory?>
+<!--suppress XmlDuplicatedId -->
 <BorderPane
 	xmlns="http://javafx.com/javafx/8.0.112"
 	xmlns:fx="http://javafx.com/fxml/1"
@@ -201,69 +202,78 @@
 		<VBox
 			styleClass="machine-container"
 			prefHeight="200.0"
-			prefWidth="240.0"
+			prefWidth="260.0"
 			spacing="10">
 			<GridPane
-				fx:id="realMachine"
 				styleClass="real-machine"
 				alignment="CENTER_RIGHT"
 				hgap="1"
 				vgap="3">
 				<MachineRegister
+					fx:id="rmTMP"
 					GridPane.columnIndex="0"
 					GridPane.rowIndex="0"
 					label="TMP"
 					field="40545"/>
 
 				<MachineRegister
+					fx:id="rmPTR"
 					GridPane.columnIndex="0"
 					GridPane.rowIndex="1"
 					label="PLR"
 					field="50"/>
 
 				<MachineRegister
+					fx:id="rmIC"
 					GridPane.columnIndex="0"
 					GridPane.rowIndex="2"
 					label="IC"
 					field="14"/>
 
 				<MachineRegister
+					fx:id="rmC"
 					GridPane.columnIndex="0"
 					GridPane.rowIndex="3"
 					label="C"
 					field="0"/>
 
 				<MachineRegister
+					fx:id="rmTI"
 					GridPane.columnIndex="0"
 					GridPane.rowIndex="4"
 					label="TI"
 					field="0"/>
 
 				<MachineRegister
+					fx:id="rmPI"
 					GridPane.columnIndex="0"
 					GridPane.rowIndex="5"
 					label="PI"
 					field="0"/>
 
 				<MachineRegister
+					fx:id="rmSI"
 					GridPane.columnIndex="1"
 					GridPane.rowIndex="0"
 					label="SI"
 					field="0"/>
 
 				<MachineRegister
+					fx:id="rmIOI"
 					GridPane.columnIndex="1"
 					GridPane.rowIndex="1"
 					label="IOI"
 					field="0"/>
 
 				<MachineRegister
+					fx:id="rmMODE"
 					GridPane.columnIndex="1"
 					GridPane.rowIndex="2"
 					label="MODE"
 					field="S"/>
 
 				<MachineRegister
+					fx:id="rmBUSY"
 					GridPane.columnIndex="1"
 					GridPane.rowIndex="3"
 					label="BUSY"
@@ -271,24 +281,26 @@
 			</GridPane>
 
 			<GridPane
-				fx:id="virtualMachine"
 				styleClass="virtual-machine"
 				alignment="CENTER_RIGHT"
 				hgap="1"
 				vgap="3">
 				<MachineRegister
+					fx:id="vmTMP"
 					GridPane.columnIndex="0"
 					GridPane.rowIndex="0"
 					label="TMP"
 					field="40545"/>
 
 				<MachineRegister
+					fx:id="vmIC"
 					GridPane.columnIndex="0"
 					GridPane.rowIndex="2"
 					label="IC"
 					field="14"/>
 
 				<MachineRegister
+					fx:id="vmC"
 					GridPane.columnIndex="0"
 					GridPane.rowIndex="3"
 					label="C"

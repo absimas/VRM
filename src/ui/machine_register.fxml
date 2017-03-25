@@ -21,7 +21,7 @@
 	<TextField
 		fx:id="field"
 		styleClass="machine-register-field"
-		prefWidth="60"
+		prefWidth="70"
 		alignment="CENTER_RIGHT"
 		editable="false"
 		focusTraversable="false">

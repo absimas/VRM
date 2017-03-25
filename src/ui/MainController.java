@@ -20,7 +20,6 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.GridPane;
 import javafx.util.Callback;
 import vrm.MemoryBlock;
 import vrm.Utils;
@@ -33,7 +32,9 @@ public class MainController implements Initializable {
   @FXML
   private TableView<MemoryBlock> memoryTable;
   @FXML
-  private GridPane realMachine, virtualMachine;
+  private MachineRegister rmTMP, rmPTR, rmIC, rmC, rmTI, rmPI, rmSI, rmIOI, rmMODE, rmBUSY;
+  @FXML
+  private MachineRegister vmTMP, vmIC, vmC;
   @FXML
   private TextField input, output;
   @FXML
@@ -163,7 +164,24 @@ public class MainController implements Initializable {
       commandLog.scrollTo(commandLog.getItems().size());
       memoryTable.refresh();
 
-      // ToDo draw registers
+      // RM registers
+      rmTMP.setField(vrm.realMachine.TMP.toString());
+      rmPTR.setField(String.valueOf(vrm.realMachine.PTR));
+      rmIC.setField(String.valueOf(vrm.realMachine.IC));
+      rmC.setField(String.valueOf(vrm.realMachine.C));
+      rmTI.setField(String.valueOf(vrm.realMachine.TI));
+      rmPI.setField(String.valueOf(vrm.realMachine.PI.ordinal()));
+      rmSI.setField(String.valueOf(vrm.realMachine.SI.ordinal()));
+      rmIOI.setField(String.valueOf(vrm.realMachine.IOI));
+      rmMODE.setField(vrm.realMachine.MODE.name());
+      rmBUSY.setField(String.valueOf(vrm.realMachine.BUSY));
+
+      // VM registers
+      if (vrm.virtualMachine == null) return;
+      vmTMP.setField(vrm.virtualMachine.TMP.toString());
+      vmIC.setField(String.valueOf(vrm.virtualMachine.IC));
+      vmC.setField(String.valueOf(vrm.virtualMachine.C));
+
       // ToDo draw I/O
     });
   }

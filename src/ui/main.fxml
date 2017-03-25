@@ -150,7 +150,8 @@
 				minWidth="40"
 				minHeight="40"
 				maxWidth="40"
-				maxHeight="40">
+				maxHeight="40"
+				onAction="#nextCommand">
 				<graphic>
 					<ImageView
 						fitHeight="25.0"

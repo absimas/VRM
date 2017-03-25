@@ -74,16 +74,16 @@ public class MainController implements Initializable {
       }
     }).start();
 
-    // Imitate looping
-    Runnable r = new Runnable() {
-      @Override
-      public void run() {
-        vrm.forward();
-        Utils.delay(this, 100);
-      }
-    };
-
-    Utils.delay(r, 100);
+//    // Imitate looping
+//    Runnable r = new Runnable() {
+//      @Override
+//      public void run() {
+//        vrm.forward();
+//        Utils.delay(this, 100);
+//      }
+//    };
+//
+//    Utils.delay(r, 100);
   }
 
   private void initializeInput() {
@@ -247,6 +247,12 @@ public class MainController implements Initializable {
     output.getParent().requestFocus();
   }
 
-  // ToDo add forward button method (basically calls vrm.forward())
+  /**
+   * Called when next command button is pressed
+   */
+  @FXML
+  public void nextCommand() {
+    vrm.forward();
+  }
 
 }

@@ -40,10 +40,16 @@ public class VirtualMachine extends Machine {
     }
 
     switch (command.type) {
+      // Other commands invoke the default handling
+      default:
+        super.execute(command);
+        wait();
+        return;
       case HALT:
         realMachine.SI = RealMachine.SuperInterrupt.HALT;
         realMachine.haltVM(this);
-        break;
+        wait();
+        return;
       case GD:
         realMachine.SI = RealMachine.SuperInterrupt.GD;
         break;
@@ -62,12 +68,11 @@ public class VirtualMachine extends Machine {
       // The following commands lead to a VM modification but cannot be executed internally.
       case STVM: case SVRG: case LDRG:
         throw new UnhandledCommandException(command, String.format("Command %s wasn't handled in %s.", command, this));
-      // Other commands invoke the default handling
-      default:
-        super.execute(command);
-        break;
     }
 
+    // All commands that require super privileges invoke a delay to wait for the RM to suspend this VM and then for the command to be executed as super
+    wait();
+    realMachine.suspendVM(this);
     wait();
   }
 

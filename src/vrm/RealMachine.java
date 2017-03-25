@@ -367,6 +367,21 @@ public class RealMachine extends Machine {
   }
 
   /**
+   * Used to suspend the given VM if it's currently being executed.
+   * This does not halt it.
+   */
+  public void suspendVM(VirtualMachine vm) throws InterruptedException {
+    // If this VM isn't currently being executed, do nothing
+    if (virtualMachine != vm) return;
+
+    // Save current VM's registers
+    execute(new Command(Command.Type.SVRG, getVirtualMachineId()));
+
+    // Clear the current VM
+    virtualMachine = null;
+  }
+
+  /**
    * Convert the given relative address to an absolute one. Current VMs page table will be used for conversion.
    */
   public int getAbsoluteAddress(int relativeAddress) {

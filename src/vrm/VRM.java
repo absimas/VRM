@@ -355,6 +355,12 @@ public class VRM {
     // Unprivileged command was executed in the RM.
     // We can now clear the SI register.
     realMachine.SI = RealMachine.SuperInterrupt.NONE;
+
+    // Imitate VM creation command to get back to VM execution
+    realMachine.memory.replace(RealMachine.MEMORY_SIZE-1, "STVM0");
+    realMachine.IC = RealMachine.MEMORY_SIZE-1;
+    realMachine.step();
+    virtualMachine = realMachine.virtualMachine;
   }
 
   private void ioiInterrupt() throws InterruptedException {

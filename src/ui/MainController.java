@@ -162,7 +162,13 @@ public class MainController implements Initializable {
       commandLog.getItems().setAll(vrm.commandLog);
       commandLog.scrollTo(commandLog.getItems().size());
       memoryTable.refresh();
+
+      // ToDo draw registers
+      // ToDo draw I/O
     });
   }
+
+  // ToDo remove back button
+  // ToDo add forward button method (basically calls vrm.forward())
 
 }

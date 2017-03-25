@@ -163,8 +163,11 @@ public class RealMachine extends Machine {
     }
   }
 
-  @Override
-  protected synchronized void execute(Command command) throws UnhandledCommandException, MemoryOutOfBoundsException, InterruptedException {
+  /**
+   * Same as {@link #execute(Command)} but does not invoke a {@link #wait()} after executing.
+   * @see #execute(Command)
+   */
+  protected synchronized void executeQuietly(Command command) throws UnhandledCommandException, MemoryOutOfBoundsException, InterruptedException {
     // Log command
     commandLog.add(String.format("%s in %s", command.toString(), this));
     System.out.println("Execute " + command + " in " + this);
@@ -339,7 +342,11 @@ public class RealMachine extends Machine {
       default:
         super.execute(command);
     }
+  }
 
+  @Override
+  protected synchronized void execute(Command command) throws UnhandledCommandException, MemoryOutOfBoundsException, InterruptedException {
+    executeQuietly(command);
     wait();
   }
 

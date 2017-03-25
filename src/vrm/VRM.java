@@ -97,7 +97,7 @@ public class VRM {
 
   public void begin() throws InterruptedException {
     // Imitate VM creation command to get back to VM execution
-    realMachine.execute(new Command(Command.Type.STVM, 0));
+    realMachine.executeQuietly(new Command(Command.Type.STVM, 0));
     virtualMachine = realMachine.virtualMachine;
 
     // Store a program (fibonacci less than 1000) in VM memory
@@ -117,6 +117,11 @@ public class VRM {
     program.replace(13, "00001");
     program.replace(14, "01000");
     program.replace(15, "HALT ");
+
+    // VM is now started and its program loaded into memory. Wait for the caller to continue.
+    synchronized (realMachine) {
+      realMachine.wait();
+    }
 
     // Point IC to the start of the program
     virtualMachine.IC = 0;

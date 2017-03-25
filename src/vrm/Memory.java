@@ -1,6 +1,8 @@
 package vrm;
 
 import com.sun.istack.internal.NotNull;
+import com.sun.istack.internal.Nullable;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Spliterator;
@@ -83,8 +85,9 @@ public class Memory implements Iterable<Word> {
    * @param word   replacement
    * @throws MemoryOutOfBoundsException when referring to a word outside the given memory block
    */
-  public void replace(int index, Word word) throws MemoryOutOfBoundsException {
-    get(index).replace(word.toString());
+  public void replace(int index, @Nullable Word word) throws MemoryOutOfBoundsException {
+    final String replacement = (word == null) ? "00000" : word.toString();
+    get(index).replace(replacement);
   }
 
   /**

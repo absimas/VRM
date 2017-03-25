@@ -283,9 +283,10 @@ public class VRM {
     // Set the handler's address as IC
     realMachine.IC = address;
 
-    // Super mode
-    realMachine.MODE = RealMachine.Mode.S;
+    // Suspend current VM
+    realMachine.suspendVM(realMachine.virtualMachine);
 
+    // Execute interruption handler program
     Command command = realMachine.stepQuietly();
     while (command.type != Command.Type.STVM) {
       // Move to the next instruction

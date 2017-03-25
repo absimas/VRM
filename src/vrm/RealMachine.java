@@ -360,7 +360,7 @@ public class RealMachine extends Machine {
   /**
    * Used to halt a VM from being tracked by this RM.
    */
-  public void haltVM(VirtualMachine vm) {
+  public synchronized void haltVM(VirtualMachine vm) {
     // Remove from VM list
     for (int i = 0; i < virtualMachines.length; i++) {
       if (virtualMachines[i] == vm) {
@@ -377,7 +377,7 @@ public class RealMachine extends Machine {
    * Used to suspend the given VM if it's currently being executed.
    * This does not halt it.
    */
-  public void suspendVM(VirtualMachine vm) throws InterruptedException {
+  public synchronized void suspendVM(VirtualMachine vm) throws InterruptedException {
     // If this VM isn't currently being executed, do nothing
     if (virtualMachine != vm) return;
 

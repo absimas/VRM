@@ -95,6 +95,8 @@ public class VirtualMachine extends Machine {
     // Complete string
     final String registers = String.format("%s%s%s00", tmp, ic, c);
 
+    System.out.println("SaveReg: " + registers);
+
     // VM memory size is 10 blocks = 100 words
     // Last block is where we save the registers
     memory.replace(91, new Word(registers.substring(0, 5)));
@@ -108,6 +110,8 @@ public class VirtualMachine extends Machine {
   public void restoreRegisters() {
     // Complete string
     final String registers = String.format("%s%s", memory.get(91).toString(), memory.get(92).toString());
+
+    System.out.println("RestoreReg: " + registers);
 
     TMP = new Word(registers.substring(0, 5));
     IC = Integer.valueOf(registers.substring(5, 7));

@@ -284,7 +284,7 @@ public class VRM {
     realMachine.MODE = RealMachine.Mode.S;
 
     Command command = realMachine.stepQuietly();
-    while (command.type != Command.Type.STVM && command.type != Command.Type.HALT) {
+    while (command.type != Command.Type.STVM) {
       // Move to the next instruction
       realMachine.IC++;
       command = realMachine.step();
@@ -327,7 +327,7 @@ public class VRM {
     realMachine.MODE = RealMachine.Mode.S;
 
     Command command = realMachine.stepQuietly();
-    while (command.type != Command.Type.STVM && command.type != Command.Type.HALT) {
+    while (command.type != Command.Type.STVM) {
       // Move to the next instruction
       realMachine.IC++;
       command = realMachine.step();
@@ -346,7 +346,6 @@ public class VRM {
    * @param failedIC IC value pointing to the failing command
    */
   private void superInterrupt(int failedIC) throws InterruptedException {
-
     // Convert the saved IC into an absolute address
     realMachine.IC = realMachine.getAbsoluteAddress(failedIC);
 
@@ -384,7 +383,7 @@ public class VRM {
     realMachine.MODE = RealMachine.Mode.S;
 
     Command command = realMachine.stepQuietly();
-    while (command.type != Command.Type.STVM && command.type != Command.Type.HALT) {
+    while (command.type != Command.Type.STVM) {
       // Move to the next instruction
       realMachine.IC++;
       command = realMachine.step();
@@ -406,6 +405,7 @@ public class VRM {
     synchronized (realMachine) {
       realMachine.notify();
     }
+
     if (virtualMachine == null) return;
     synchronized (virtualMachine) {
       virtualMachine.notify();

@@ -33,9 +33,6 @@
   -fx-padding: 0 3 0 3;
 }
 
-.previous-command {
-}
-
 .next-command {
   -fx-font-size: 30;
   -fx-padding: 5;

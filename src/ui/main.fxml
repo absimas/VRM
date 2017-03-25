@@ -155,29 +155,11 @@
 					<ImageView
 						fitHeight="25.0"
 						pickOnBounds="true"
-						preserveRatio="true"
-						rotate="180">
-						<Image url="@arrow.png"/>
-					</ImageView>
-				</graphic>
-			</Button>
-
-			<Button
-				styleClass="previous-command"
-				minWidth="40"
-				minHeight="40"
-				maxWidth="40"
-				maxHeight="40">
-				<graphic>
-					<ImageView
-						fitHeight="25.0"
-						pickOnBounds="true"
 						preserveRatio="true">
 						<Image url="@arrow.png"/>
 					</ImageView>
 				</graphic>
 			</Button>
-
 
 			<TextField
 				fx:id="input"

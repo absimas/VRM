@@ -247,7 +247,6 @@ public class MainController implements Initializable {
     output.getParent().requestFocus();
   }
 
-  // ToDo remove back button
   // ToDo add forward button method (basically calls vrm.forward())
 
 }

@@ -31,7 +31,7 @@ public class VirtualMachine extends Machine {
   @Override
   protected synchronized void execute(Command command) throws UnhandledCommandException, MemoryOutOfBoundsException, InterruptedException {
     // Log command
-    commandLog.add(command.toString());
+    commandLog.add(String.format("%s in %s", command.toString(), this));
     System.out.println("Execute " + command + " in " + this);
 
     // Commands executed in a VM must have an x argument of 0

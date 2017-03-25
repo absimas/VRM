@@ -166,7 +166,7 @@ public class RealMachine extends Machine {
   @Override
   protected synchronized void execute(Command command) throws UnhandledCommandException, MemoryOutOfBoundsException, InterruptedException {
     // Log command
-    commandLog.add(command.toString());
+    commandLog.add(String.format("%s in %s", command.toString(), this));
     System.out.println("Execute " + command + " in " + this);
 
     switch (command.type) {

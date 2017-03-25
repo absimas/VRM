@@ -42,6 +42,7 @@ public class VirtualMachine extends Machine {
     switch (command.type) {
       case HALT:
         realMachine.SI = RealMachine.SuperInterrupt.HALT;
+        realMachine.haltVM(this);
         break;
       case GD:
         realMachine.SI = RealMachine.SuperInterrupt.GD;

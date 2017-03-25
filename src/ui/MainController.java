@@ -60,7 +60,7 @@ public class MainController implements Initializable {
     updateRegisters();
 
     // Input field listener
-    initializeInput();
+    initializeIO();
 
     // Begin execution
     vrm.commandLog.addListener((ListChangeListener<String>) c -> draw());
@@ -86,7 +86,8 @@ public class MainController implements Initializable {
 //    Utils.delay(r, 100);
   }
 
-  private void initializeInput() {
+  private void initializeIO() {
+    // Input
     input.textProperty().addListener((observable, oldValue, newValue) -> {
       String value;
       try {
@@ -100,6 +101,12 @@ public class MainController implements Initializable {
 
       vrm.realMachine.keyboard.word = new Word(value);
     });
+
+    // Output
+    // Disable clicking and in/out focusing
+    output.setMouseTransparent(false);
+    output.setFocusTraversable(false);
+    output.addEventFilter(MouseEvent.ANY, Event::consume);
   }
 
   private void initializeCommandList() {

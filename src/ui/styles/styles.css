@@ -38,8 +38,15 @@
   -fx-padding: 5;
 }
 
-.input-field, .output-field {
+.input-field {
   -fx-margin: 0 0 0 15;
+}
+
+.output-field {
+  -fx-margin: 0 0 0 15;
+  -fx-background-color: -fx-outer-border, -fx-inner-border, -fx-body-color;
+  -fx-background-insets: 0, 1, 2;
+  -fx-background-radius: 5, 4, 3;
 }
 
 .machine-register-field {

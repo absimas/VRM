@@ -171,6 +171,7 @@
 			<TextField
 				fx:id="output"
 				styleClass="output-field"
+				editable="false"
 				promptText="OUTPUT"
 				prefWidth="100"/>
 		</HBox>

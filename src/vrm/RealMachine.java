@@ -381,6 +381,9 @@ public class RealMachine extends Machine {
     // If this VM isn't currently being executed, do nothing
     if (virtualMachine != vm) return;
 
+    // Change MODE
+    MODE = Mode.S;
+
     // Save current VM's registers
     execute(new Command(Command.Type.SVRG, getVirtualMachineId()));
 

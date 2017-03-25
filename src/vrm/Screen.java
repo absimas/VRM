@@ -1,34 +1,19 @@
 package vrm;
 
 import com.sun.istack.internal.NotNull;
-
-import java.util.Arrays;
+import com.sun.istack.internal.Nullable;
 
 /**
  * Screen model. Used to display output.
  */
 public class Screen implements Channel {
 
-  /**
-   * Size in word count.
-   */
-  public static final int SIZE = 1;
+  @Nullable
+  public Word word;
 
-  public final Word[] words = new Word[SIZE];
-
-  @Override
-  public Word[] read() {
-    throw new IllegalStateException("Cannot read from screen!");
-  }
-
-  @Override
-  public void write(@NotNull Word... words) {
-    System.out.println("Write to screen: " + Arrays.toString(words));
-    if (words == null || words.length != SIZE) {
-      throw new IllegalArgumentException(String.format("Must write %d words!", SIZE));
-    }
-
-    System.arraycopy(words, 0, this.words, 0, words.length);
+  public void write(@NotNull Word word) {
+    System.out.println("Write to screen: " + word.toString());
+    this.word = word;
   }
 
   @Override

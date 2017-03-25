@@ -124,8 +124,8 @@ public class RealMachine extends Machine {
    */
   public int BUSY = 0;
 
-  private final Keyboard keyboard = new Keyboard();
-  private final Screen screen = new Screen();
+  public final Keyboard keyboard = new Keyboard();
+  public final Screen screen = new Screen();
   private final ExternalMemory externalMemory = new ExternalMemory(EXTERNAL_MEMORY_PATH);
   private final VirtualMachine[] virtualMachines = new VirtualMachine[MAX_VM_COUNT];
   /**
@@ -180,13 +180,8 @@ public class RealMachine extends Machine {
         // Block keyboard channel
         setChannelBusy(keyboard.getIndex(), true);
 
-        // Read symbols from keyboard
-        final Word[] input = keyboard.read();
-
-        // Save in memory
-        for (int i = 0; i < input.length; i++) {
-          memory.replace(command.getArgument() + i, input[i]);
-        }
+        // Save word from keyboard
+        memory.replace(command.getArgument(), keyboard.read());
 
         // Unblock keyboard channel
         setChannelBusy(keyboard.getIndex(), false);

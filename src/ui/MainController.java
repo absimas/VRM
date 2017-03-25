@@ -10,7 +10,6 @@ import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
@@ -24,6 +23,7 @@ import javafx.util.Callback;
 import vrm.MemoryBlock;
 import vrm.Utils;
 import vrm.VRM;
+import vrm.Word;
 
 public class MainController implements Initializable {
 
@@ -37,8 +37,6 @@ public class MainController implements Initializable {
   private MachineRegister vmTMP, vmIC, vmC;
   @FXML
   private TextField input, output;
-  @FXML
-  private Button outputPush;
 
   private final VRM vrm;
   private int vmIndex = -1;
@@ -48,6 +46,23 @@ public class MainController implements Initializable {
    */
   public MainController() throws InterruptedException {
     vrm = new VRM(this);
+  }
+
+  @Override
+  public void initialize(URL location, ResourceBundle resources) {
+    // Command ListView
+    initializeCommandList();
+
+    // Memory TableView
+    initializeMemoryTable();
+
+    // Machine registers (just update with VRM data)
+    updateRegisters();
+
+    // Input field listener
+    initializeInput();
+
+    // Begin execution
     vrm.commandLog.addListener((ListChangeListener<String>) c -> draw());
 
     // Execute VRM on a different thread so we can interrupt the waits
@@ -71,13 +86,20 @@ public class MainController implements Initializable {
     Utils.delay(r, 100);
   }
 
-  @Override
-  public void initialize(URL location, ResourceBundle resources) {
-    // Command ListView
-    initializeCommandList();
+  private void initializeInput() {
+    input.textProperty().addListener((observable, oldValue, newValue) -> {
+      String value;
+      try {
+        // Try preceding number with zeroes
+        final int number = Integer.parseInt(newValue);
+        value = Utils.precedeZeroes(number, Word.LENGTH);
+      } catch (NumberFormatException ignored) {
+        // Otherwise precede with spaces
+        value = String.format("%5s", newValue);
+      }
 
-    // Memory TableView
-    initializeMemoryTable();
+      vrm.realMachine.keyboard.word = new Word(value);
+    });
   }
 
   private void initializeCommandList() {
@@ -160,30 +182,69 @@ public class MainController implements Initializable {
   public void draw() {
     // Execute drawing on the UI thread
     Platform.runLater(() -> {
-      commandLog.getItems().setAll(vrm.commandLog);
-      commandLog.scrollTo(commandLog.getItems().size());
-      memoryTable.refresh();
+      // Re-draw log
+      updateLog();
 
-      // RM registers
-      rmTMP.setField(vrm.realMachine.TMP.toString());
-      rmPTR.setField(String.valueOf(vrm.realMachine.PTR));
-      rmIC.setField(String.valueOf(vrm.realMachine.IC));
-      rmC.setField(String.valueOf(vrm.realMachine.C));
-      rmTI.setField(String.valueOf(vrm.realMachine.TI));
-      rmPI.setField(String.valueOf(vrm.realMachine.PI.ordinal()));
-      rmSI.setField(String.valueOf(vrm.realMachine.SI.ordinal()));
-      rmIOI.setField(String.valueOf(vrm.realMachine.IOI));
-      rmMODE.setField(vrm.realMachine.MODE.name());
-      rmBUSY.setField(String.valueOf(vrm.realMachine.BUSY));
+      // Re-draw grid
+      updateMemory();
 
-      // VM registers
-      if (vrm.virtualMachine == null) return;
-      vmTMP.setField(vrm.virtualMachine.TMP.toString());
-      vmIC.setField(String.valueOf(vrm.virtualMachine.IC));
-      vmC.setField(String.valueOf(vrm.virtualMachine.C));
+      // Re-draw registers
+      updateRegisters();
 
-      // ToDo draw I/O
+      // Re-draw I/O fields
+      updateIO();
     });
+  }
+
+  private void updateLog() {
+    commandLog.getItems().setAll(vrm.commandLog);
+    commandLog.scrollTo(commandLog.getItems().size());
+  }
+
+  private void updateMemory() {
+    memoryTable.refresh();
+  }
+
+  private void updateRegisters() {
+    // RM registers
+    rmTMP.setField(vrm.realMachine.TMP.toString());
+    rmPTR.setField(String.valueOf(vrm.realMachine.PTR));
+    rmIC.setField(String.valueOf(vrm.realMachine.IC));
+    rmC.setField(String.valueOf(vrm.realMachine.C));
+    rmTI.setField(String.valueOf(vrm.realMachine.TI));
+    rmPI.setField(String.valueOf(vrm.realMachine.PI.ordinal()));
+    rmSI.setField(String.valueOf(vrm.realMachine.SI.ordinal()));
+    rmIOI.setField(String.valueOf(vrm.realMachine.IOI));
+    rmMODE.setField(vrm.realMachine.MODE.name());
+    rmBUSY.setField(String.valueOf(vrm.realMachine.BUSY));
+
+    // VM registers
+    if (vrm.virtualMachine == null) return;
+    vmTMP.setField(vrm.virtualMachine.TMP.toString());
+    vmIC.setField(String.valueOf(vrm.virtualMachine.IC));
+    vmC.setField(String.valueOf(vrm.virtualMachine.C));
+  }
+
+  private void updateIO() {
+    // Input
+    Word word = vrm.realMachine.keyboard.word;
+    if (word == null) {
+      input.clear();
+    } else {
+      input.setText(word.toString());
+    }
+
+    // Output
+    word = vrm.realMachine.screen.word;
+    if (word == null) {
+      output.clear();
+    } else {
+      output.setText(word.toString());
+    }
+
+    // Remove focus from both fields
+    input.getParent().requestFocus();
+    output.getParent().requestFocus();
   }
 
   // ToDo remove back button

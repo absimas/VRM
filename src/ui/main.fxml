@@ -182,19 +182,14 @@
 			<TextField
 				fx:id="input"
 				styleClass="input-field"
-				promptText="OUTPUT"
+				promptText="INPUT"
 				prefWidth="100"/>
 
 			<TextField
 				fx:id="output"
 				styleClass="output-field"
-				promptText="INPUT"
+				promptText="OUTPUT"
 				prefWidth="100"/>
-
-			<Button
-				fx:id="outputPush"
-				text="Push"
-				disable="true"/>
 		</HBox>
 	</bottom>
 

@@ -59,7 +59,7 @@ public class ExternalMemory implements Channel {
     }
     final Word word = new Word(string);
 
-    // Combine 10 words (note reference is the same!)
+    // Combine 10 word (note reference is the same!)
     final Word[] words = new Word[WORD_IO];
     for (int i = 0; i < WORD_IO; i++) {
       words[i] = word;
@@ -110,10 +110,10 @@ public class ExternalMemory implements Channel {
     final byte[] buffer = new byte[LINE_SIZE];
     raf.readFully(buffer);
 
-    // Convert bytes to words
+    // Convert bytes to word
     final Word[] words = new Word[WORD_IO];
     int offset = 0;
-    // There are 10 words on 1 line
+    // There are 10 word on 1 line
     for (int i = 0; i < WORD_IO; i++) {
       words[i] = new Word(new String(buffer, offset, Word.LENGTH));
 
@@ -125,7 +125,7 @@ public class ExternalMemory implements Channel {
   }
 
   /**
-   * Writes 10 words starting with the location pointed by {@link #pointer}.
+   * Writes 10 word starting with the location pointed by {@link #pointer}.
    * The pointer is not shifted afterwards!
    * @throws RuntimeException if errors occur while writing to external memory file
    */
@@ -139,15 +139,15 @@ public class ExternalMemory implements Channel {
   }
 
   private void writeInternal(@NotNull Word[] words) throws IOException {
-    // Ensure we've the correct amount of words
+    // Ensure we've the correct amount of word
     if (words.length < WORD_IO) {
-      throw new IllegalStateException("Not enough words provided for an output!");
+      throw new IllegalStateException("Not enough word provided for an output!");
     }
 
     // Seek to pointed position
     raf.seek(pointer * LINE_SIZE);
 
-    // Convert words to bytes
+    // Convert word to bytes
     final byte[] bytes = new byte[LINE_SIZE];
     int offset = 0;
     for (int i = 0; i < WORD_IO; i++) {

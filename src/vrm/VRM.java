@@ -96,10 +96,8 @@ public class VRM {
   }
 
   public void begin() throws InterruptedException {
-    // Imitate VM creation command
-    realMachine.memory.replace(RealMachine.MEMORY_SIZE-1, "STVM0");
-    realMachine.IC = RealMachine.MEMORY_SIZE-1;
-    realMachine.step();
+    // Imitate VM creation command to get back to VM execution
+    realMachine.execute(new Command(Command.Type.STVM, 0));
     virtualMachine = realMachine.virtualMachine;
 
     // Store a program (fibonacci less than 1000) in VM memory
@@ -357,9 +355,7 @@ public class VRM {
     realMachine.SI = RealMachine.SuperInterrupt.NONE;
 
     // Imitate VM creation command to get back to VM execution
-    realMachine.memory.replace(RealMachine.MEMORY_SIZE-1, "STVM0");
-    realMachine.IC = RealMachine.MEMORY_SIZE-1;
-    realMachine.step();
+    realMachine.execute(new Command(Command.Type.STVM, 0));
     virtualMachine = realMachine.virtualMachine;
   }
 

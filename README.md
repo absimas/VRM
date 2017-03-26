@@ -17,4 +17,4 @@ Implementation of Virtual and Real Machines (OS course assignment #2)
 - If it takes time to understand - comment it
 
 ## UI:
-![ui](/vrm.png)
+![ui](/vrm-v2.png)

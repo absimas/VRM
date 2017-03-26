@@ -176,8 +176,10 @@ public class RealMachine extends Machine {
       case GD:
         // Block until keyboard is free
         if (isChannelBusy(keyboard.getIndex())) {
-          // ToDo test?
-          wait();
+          // Wait on the busy channel's object
+          synchronized (keyboard) {
+            keyboard.wait();
+          }
         }
 
         // Block keyboard channel
@@ -192,8 +194,10 @@ public class RealMachine extends Machine {
       case PD:
         // Block until screen is free
         if (isChannelBusy(screen.getIndex())) {
-          // ToDo test?
-          wait();
+          // Wait on the busy channel's object
+          synchronized (screen) {
+            screen.wait();
+          }
         }
 
         // Block screen channel
@@ -208,8 +212,10 @@ public class RealMachine extends Machine {
       case RD: {
         // Block until external memory is free
         if (isChannelBusy(externalMemory.getIndex())) {
-          // ToDo test?
-          wait();
+          // Wait on the busy channel's object
+          synchronized (externalMemory) {
+            externalMemory.wait();
+          }
         }
 
         // Block external memory channel
@@ -230,8 +236,10 @@ public class RealMachine extends Machine {
       case WD: {
         // Block until external memory is free
         if (isChannelBusy(externalMemory.getIndex())) {
-          // ToDo test?
-          wait();
+          // Wait on the busy channel's object
+          synchronized (externalMemory) {
+            externalMemory.wait();
+          }
         }
 
         // Block external memory channel
@@ -253,8 +261,10 @@ public class RealMachine extends Machine {
       case SD:
         // Block until external memory is free
         if (isChannelBusy(externalMemory.getIndex())) {
-          // ToDo test?
-          wait();
+          // Wait on the busy channel's object
+          synchronized (externalMemory) {
+            externalMemory.wait();
+          }
         }
 
         // Block external memory channel

@@ -403,6 +403,7 @@ public class RealMachine extends Machine {
 
   /**
    * Convert the given relative address to an absolute one. Current VMs page table will be used for conversion.
+   * @param relativeAddress current VMs relative address
    */
   public int getAbsoluteAddress(int relativeAddress) {
     return getAbsoluteAddress(getPageTable(PTR), relativeAddress);

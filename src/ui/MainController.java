@@ -1,6 +1,8 @@
 package ui;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyObjectWrapper;
@@ -187,10 +189,11 @@ public class MainController implements Initializable {
   }
 
   public void draw() {
+    final List<String> commands = new ArrayList<>(vrm.commandLog);
     // Execute drawing on the UI thread
     Platform.runLater(() -> {
       // Re-draw log
-      updateLog();
+      updateLog(commands);
 
       // Re-draw grid
       updateMemory();
@@ -203,9 +206,9 @@ public class MainController implements Initializable {
     });
   }
 
-  private void updateLog() {
-    commandLog.getItems().setAll(vrm.commandLog);
-    commandLog.scrollTo(commandLog.getItems().size());
+  private void updateLog(List<String> commands) {
+    commandLog.getItems().setAll(commands);
+    commandLog.scrollTo(commands.size());
   }
 
   private void updateMemory() {

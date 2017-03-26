@@ -169,24 +169,17 @@ public abstract class Machine {
         break;
       case JE:
         // If not equal, increment IC and leave
-        if (C != Comparison.EQUAL) {
-          break;
-        }
-        // Execute JP
-        execute(new Command(Command.Type.JP, command.getArguments()));
+        if (C != Comparison.EQUAL) break;
+        IC = command.getArgument();
         break;
       case JL:
         // If not less, increment IC and leave
-        if (C != Comparison.LESS) {
-          break;
-        }
-        // Execute JP
-        execute(new Command(Command.Type.JP, command.getArguments()));
+        if (C != Comparison.LESS) break;
+        IC = command.getArgument();
         break;
       case JM:
         if (C != Comparison.MORE) break;
-        // Execute JP
-        execute(new Command(Command.Type.JP, command.getArguments()));
+        IC = command.getArgument();
         break;
       default:
         throw new IllegalStateException(String.format("Tried to handle an unexpected command %s in %s!", command, this));

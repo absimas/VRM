@@ -115,7 +115,7 @@ public class VRM {
     program.replace(10, "JP000");
     program.replace(12, "00000");
     program.replace(13, "00001");
-    program.replace(14, "01000");
+    program.replace(14, "00005");
     program.replace(15, "HALT ");
 
     // VM is now started and its program loaded into memory. Wait for the caller to continue.
@@ -283,7 +283,7 @@ public class VRM {
     // Set the handler's address as IC
     realMachine.IC = address;
 
-    // Suspend current VM
+    // Suspend current VM (will also change MODE)
     realMachine.suspendVM(realMachine.virtualMachine);
 
     // Execute interruption handler program
@@ -291,7 +291,7 @@ public class VRM {
     while (command.type != Command.Type.STVM) {
       // Move to the next instruction
       realMachine.IC++;
-      command = realMachine.step();
+      command = realMachine.stepQuietly();
     }
 
     // Reset mode
@@ -334,7 +334,7 @@ public class VRM {
     while (command.type != Command.Type.STVM) {
       // Move to the next instruction
       realMachine.IC++;
-      command = realMachine.step();
+      command = realMachine.stepQuietly();
     }
 
     // Reset mode
@@ -394,7 +394,7 @@ public class VRM {
     while (command.type != Command.Type.STVM) {
       // Move to the next instruction
       realMachine.IC++;
-      command = realMachine.step();
+      command = realMachine.stepQuietly();
     }
 
     // Reset mode

@@ -394,11 +394,14 @@ public class RealMachine extends Machine {
     // Change MODE
     MODE = Mode.S;
 
-    // Save current VM's registers
-    execute(new Command(Command.Type.SVRG, getVirtualMachineId()));
+    // Save current VM
+    final int vmIndex = getVirtualMachineId();
 
     // Clear the current VM
     virtualMachine = null;
+
+    // Save current VM's registers
+    execute(new Command(Command.Type.SVRG, vmIndex));
   }
 
   /**

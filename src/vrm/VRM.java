@@ -243,7 +243,7 @@ public class VRM {
 
     // Loop execution until STVM is reached
     while (true) {
-      final Command command = realMachine.stepQuietly();
+      final Command command = realMachine.step();
       if (command.type == Command.Type.STVM) break;
       // If a non-final (STVM) command was executed, wait and then increment IC for the next iteration
       realMachine.doWait();
@@ -300,7 +300,7 @@ public class VRM {
 
     // Loop execution until STVM is reached
     while (true) {
-      final Command command = realMachine.stepQuietly();
+      final Command command = realMachine.step();
       if (command.type == Command.Type.STVM) break;
       // If a non-final (STVM) command was executed, wait and then increment IC for the next iteration
       realMachine.doWait();
@@ -330,7 +330,7 @@ public class VRM {
 
     // Execute VM's command in RM
     realMachine.IC = realMachine.getAbsoluteAddress(failedIC);
-    realMachine.stepQuietly();
+    realMachine.step(realMachine.SI != RealMachine.SuperInterrupt.SD);
 
     // Clear SI
     realMachine.SI = RealMachine.SuperInterrupt.NONE;
@@ -380,7 +380,7 @@ public class VRM {
 
     // Loop execution until STVM is reached
     while (true) {
-      final Command command = realMachine.stepQuietly();
+      final Command command = realMachine.step();
       if (command.type == Command.Type.STVM) break;
       // If a non-final (STVM) command was executed, wait and then increment IC for the next iteration
       realMachine.doWait();

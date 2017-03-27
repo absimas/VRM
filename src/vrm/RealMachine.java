@@ -457,24 +457,17 @@ public class RealMachine extends Machine {
    * @throws InterruptedException when a machine block (e.g. when waiting for a channel) is interrupted
    */
   public Command step() throws UnhandledCommandException, InterruptedException {
-    // Switch to super mode
-    MODE = RealMachine.Mode.S;
-
-    final Command command = stepQuietly();
-
-    // Switch back to user mode
-    MODE = RealMachine.Mode.U;
-
-    return command;
+    return step(true);
   }
 
   /**
-   * Same as {@link #step()} but doesn't modify the {@link #MODE} register.
+   * Executes instruction pointed by {@code #IC}.
+   * @param preferAbsolute when true will treat parsed command's arguments as virtual, i.e. they will be converted to absolute using VM's page table.
    * @return returns the executed instruction
    * @throws UnhandledCommandException when a command cannot be handled in this machine. E.g. STVMx in a VM.
    * @throws InterruptedException when a machine block (e.g. when waiting for a channel) is interrupted
    */
-  public Command stepQuietly() throws UnhandledCommandException, InterruptedException {
+  public Command step(boolean preferAbsolute) throws UnhandledCommandException, InterruptedException {
     // Fetch Word at IC
     final Word word;
     try {
@@ -496,10 +489,10 @@ public class RealMachine extends Machine {
       throw new RuntimeException(String.format("RM encountered an invalid command: %s!", word));
     }
 
-    // If this command is located in the VM memory block, create an identical command with an absolute address
+    // If the caller prefers an absolute command and this command is located in the VM memory block, create an identical command with an absolute address
     final int startInclusive = INTERRUPT_TABLE_SIZE + VM_PAGE_TABLES_SIZE;
     final int endExclusive = startInclusive + MAX_VM_COUNT * VM_MEMORY_SIZE;
-    if (IC >= startInclusive && IC < endExclusive) {
+    if (preferAbsolute && IC >= startInclusive && IC < endExclusive) {
       command = getAbsoluteCommand(command);
     }
 

@@ -124,4 +124,11 @@ public class VirtualMachine extends Machine {
     C = Comparison.values()[Character.getNumericValue(registers.charAt(7))];
   }
 
+  /**
+   * Convenience method that synchronizes a {@link #wait()} command.
+   */
+  public synchronized void doWait() throws InterruptedException {
+    wait();
+  }
+
 }

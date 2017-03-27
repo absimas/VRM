@@ -118,6 +118,7 @@ public class VRM {
         // 5. Invalid instruction
         realMachine.PI = RealMachine.ProgramInterrupt.INV_OP;
         commandLog.add(String.format("%s in %s", word.toString(), virtualMachine));
+        virtualMachine.doWait();
         programInterrupt();
         continue;
       }

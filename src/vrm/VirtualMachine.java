@@ -2,6 +2,7 @@ package vrm;
 
 import javafx.collections.ObservableList;
 import vrm.exceptions.MemoryOutOfBoundsException;
+import vrm.exceptions.NumberOverflowException;
 import vrm.exceptions.UnhandledCommandException;
 
 /**
@@ -42,7 +43,12 @@ public class VirtualMachine extends Machine {
     switch (command.type) {
       // Other commands invoke the default handling
       default:
-        super.execute(command);
+        try {
+          super.execute(command);
+        } catch (NumberOverflowException e) {
+          e.printStackTrace();
+          realMachine.PI = RealMachine.ProgramInterrupt.OVERFLOW;
+        }
         wait();
         return;
       case HALT:

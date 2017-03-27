@@ -6,6 +6,7 @@ import javafx.collections.ObservableList;
 import vrm.exceptions.InvalidArgumentsException;
 import vrm.exceptions.InvalidCommandException;
 import vrm.exceptions.MemoryOutOfBoundsException;
+import vrm.exceptions.NumberOverflowException;
 import vrm.exceptions.UnhandledCommandException;
 
 /**
@@ -350,7 +351,12 @@ public class RealMachine extends Machine {
         break;
       }
       default:
-        super.execute(command);
+        try {
+          super.execute(command);
+        } catch (NumberOverflowException e) {
+          e.printStackTrace();
+          PI = RealMachine.ProgramInterrupt.OVERFLOW;
+        }
     }
   }
 

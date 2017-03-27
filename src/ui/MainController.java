@@ -220,10 +220,10 @@ public class MainController implements Initializable {
     rmTMP.setField(vrm.realMachine.TMP.toString());
     rmPTR.setField(String.valueOf(vrm.realMachine.PTR));
     rmIC.setField(String.valueOf(vrm.realMachine.IC));
-    rmC.setField(String.valueOf(vrm.realMachine.C));
+    rmC.setField(String.format("%d (%s)", vrm.realMachine.C.ordinal(), vrm.realMachine.C));
     rmTI.setField(String.valueOf(vrm.realMachine.TI));
-    rmPI.setField(String.valueOf(vrm.realMachine.PI.ordinal()));
-    rmSI.setField(String.valueOf(vrm.realMachine.SI.ordinal()));
+    rmPI.setField(String.format("%d (%s)", vrm.realMachine.PI.ordinal(), vrm.realMachine.PI));
+    rmSI.setField(String.format("%d (%s)", vrm.realMachine.SI.ordinal(), vrm.realMachine.SI));
     rmIOI.setField(String.valueOf(vrm.realMachine.IOI));
     rmMODE.setField(vrm.realMachine.MODE.name());
     rmBUSY.setField(String.valueOf(vrm.realMachine.BUSY));
@@ -232,7 +232,7 @@ public class MainController implements Initializable {
     if (vrm.virtualMachine == null) return;
     vmTMP.setField(vrm.virtualMachine.TMP.toString());
     vmIC.setField(String.valueOf(vrm.virtualMachine.IC));
-    vmC.setField(String.valueOf(vrm.virtualMachine.C));
+    vmC.setField(String.format("%d (%s)", vrm.virtualMachine.C.ordinal(), vrm.virtualMachine.C));
   }
 
   private void updateIO() {

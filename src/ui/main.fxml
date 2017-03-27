@@ -181,7 +181,7 @@
 		<VBox
 			styleClass="machine-container"
 			prefHeight="200.0"
-			prefWidth="260.0"
+			prefWidth="300.0"
 			spacing="10">
 			<GridPane
 				styleClass="real-machine"
@@ -199,7 +199,7 @@
 					fx:id="rmPTR"
 					GridPane.columnIndex="0"
 					GridPane.rowIndex="1"
-					label="PLR"
+					label="PTR"
 					field="50"/>
 
 				<MachineRegister
@@ -214,7 +214,7 @@
 					GridPane.columnIndex="0"
 					GridPane.rowIndex="3"
 					label="C"
-					field="0"/>
+					field="0 (EQUAL)"/>
 
 				<MachineRegister
 					fx:id="rmTI"
@@ -228,14 +228,14 @@
 					GridPane.columnIndex="0"
 					GridPane.rowIndex="5"
 					label="PI"
-					field="0"/>
+					field="0 (NONE)"/>
 
 				<MachineRegister
 					fx:id="rmSI"
 					GridPane.columnIndex="1"
 					GridPane.rowIndex="0"
 					label="SI"
-					field="0"/>
+					field="0 (NONE)"/>
 
 				<MachineRegister
 					fx:id="rmIOI"
@@ -283,7 +283,7 @@
 					GridPane.columnIndex="0"
 					GridPane.rowIndex="3"
 					label="C"
-					field="0"/>
+					field="0 (EQUAL)"/>
 			</GridPane>
 		</VBox>
 	</right>

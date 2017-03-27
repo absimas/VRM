@@ -240,13 +240,15 @@ public class VRM {
     // Suspend current VM (will also change MODE)
     realMachine.suspendVM(realMachine.virtualMachine);
 
-    // Execute interruption handler program
-    Command command = realMachine.stepQuietly();
-    while (command.type != Command.Type.STVM) {
-      // Move to the next instruction
+    // Loop execution until STVM is reached
+    while (true) {
+      final Command command = realMachine.stepQuietly();
+      if (command.type == Command.Type.STVM) break;
+      // If a non-final (STVM) command was executed, wait and then increment IC for the next iteration
+      realMachine.doWait();
       realMachine.IC++;
-      command = realMachine.stepQuietly();
     }
+    // Now, since STVM was executed, update VM reference
     virtualMachine = realMachine.virtualMachine;
 
     // Reset mode
@@ -254,6 +256,9 @@ public class VRM {
 
     // Reset TI
     realMachine.TI = RealMachine.DEFAULT_TIMER;
+
+    // Now that registers have been modified, wait for the next command
+    realMachine.doWait();
   }
 
   private void programInterrupt() throws InterruptedException {
@@ -292,12 +297,15 @@ public class VRM {
     // Super mode
     realMachine.MODE = RealMachine.Mode.S;
 
-    Command command = realMachine.stepQuietly();
-    while (command.type != Command.Type.STVM) {
-      // Move to the next instruction
+    // Loop execution until STVM is reached
+    while (true) {
+      final Command command = realMachine.stepQuietly();
+      if (command.type == Command.Type.STVM) break;
+      // If a non-final (STVM) command was executed, wait and then increment IC for the next iteration
+      realMachine.doWait();
       realMachine.IC++;
-      command = realMachine.stepQuietly();
     }
+    // Now, since STVM was executed, update VM reference
     virtualMachine = realMachine.virtualMachine;
 
     // Reset mode
@@ -305,6 +313,9 @@ public class VRM {
 
     // Clear PI
     realMachine.PI = RealMachine.ProgramInterrupt.NONE;
+
+    // Now that registers have been modified, wait for the next command
+    realMachine.doWait();
   }
 
   /**
@@ -322,6 +333,9 @@ public class VRM {
     // Unprivileged command was executed in the RM.
     // We can now clear the SI register.
     realMachine.SI = RealMachine.SuperInterrupt.NONE;
+
+    // Now that registers have been modified, wait for the next command
+    realMachine.doWait();
 
     // Imitate VM creation command to get back to VM execution
     realMachine.execute(new Command(Command.Type.STVM, 0));
@@ -360,12 +374,15 @@ public class VRM {
     // Super mode
     realMachine.MODE = RealMachine.Mode.S;
 
-    Command command = realMachine.stepQuietly();
-    while (command.type != Command.Type.STVM) {
-      // Move to the next instruction
+    // Loop execution until STVM is reached
+    while (true) {
+      final Command command = realMachine.stepQuietly();
+      if (command.type == Command.Type.STVM) break;
+      // If a non-final (STVM) command was executed, wait and then increment IC for the next iteration
+      realMachine.doWait();
       realMachine.IC++;
-      command = realMachine.stepQuietly();
     }
+    // Now, since STVM was executed, update VM reference
     virtualMachine = realMachine.virtualMachine;
 
     // Reset mode
@@ -373,6 +390,9 @@ public class VRM {
     
     // Clear given channel from bitmask
     Utils.clearFlag(realMachine.IOI, channel);
+
+    // Now that registers have been modified, wait for the next command
+    realMachine.doWait();
   }
 
   /**

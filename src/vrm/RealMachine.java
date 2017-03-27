@@ -363,7 +363,6 @@ public class RealMachine extends Machine {
   @Override
   protected synchronized void execute(Command command) throws UnhandledCommandException, MemoryOutOfBoundsException, InterruptedException {
     executeQuietly(command);
-    wait();
   }
 
   /**
@@ -408,6 +407,9 @@ public class RealMachine extends Machine {
 
     // Save current VM's registers
     execute(new Command(Command.Type.SVRG, vmIndex));
+
+    // Wait for the next command
+    wait();
   }
 
   /**
@@ -541,6 +543,13 @@ public class RealMachine extends Machine {
     }
 
     throw new IllegalStateException("Current VM not found in the VM list!");
+  }
+
+  /**
+   * Convenience method that synchronizes a {@link #wait()} command.
+   */
+  public synchronized void doWait() throws InterruptedException {
+    wait();
   }
 
 }

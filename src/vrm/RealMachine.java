@@ -256,7 +256,7 @@ public class RealMachine extends Machine {
         externalMemory.write(words);
 
         // Unblock external memory channel
-        setChannelBusy(externalMemory.getIndex(), true);
+        setChannelBusy(externalMemory.getIndex(), false);
         break;
       }
       case SD:

@@ -25,7 +25,7 @@
 	maxHeight="-Infinity"
 	maxWidth="-Infinity"
 	prefHeight="365.0"
-	prefWidth="1020.0">
+	prefWidth="1080.0">
 	<left>
 			<ListView
 				fx:id="commandLog"

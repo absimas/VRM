@@ -27,6 +27,7 @@ public class ExternalMemoryTest {
   @Test
   public void write() throws IOException {
     final ExternalMemory mem = new ExternalMemory(PATH);
+    mem.initialize();
     final Word[] words = new Word[10];
 
     // First line
@@ -58,6 +59,7 @@ public class ExternalMemoryTest {
   public void writeToMiddle() throws IOException {
     // Open external mem object
     final ExternalMemory mem = new ExternalMemory(PATH);
+    mem.initialize();
     final Word[] words = new Word[10];
 
     // Re-Initialize memory
@@ -94,6 +96,7 @@ public class ExternalMemoryTest {
   public void read() throws IOException {
     // Open external mem object
     final ExternalMemory mem = new ExternalMemory(PATH);
+    mem.initialize();
 
     // Re-Initialize memory
     final String initial = "AD000 AD001 AD002 AD003 AD004 AD005 AD006 AD007 AD008 AD009\n" +
@@ -126,6 +129,7 @@ public class ExternalMemoryTest {
   public void readFromMiddle() throws IOException {
     // Open external mem object
     final ExternalMemory mem = new ExternalMemory(PATH);
+    mem.initialize();
 
     // Re-Initialize memory
     final String initial = "AD000 AD001 AD002 AD003 AD004 AD005 AD006 AD007 AD008 AD009\n" +
@@ -153,6 +157,7 @@ public class ExternalMemoryTest {
   public void initializeTest() {
     // Open external mem object
     final ExternalMemory mem = new ExternalMemory(PATH);
+    mem.initialize();
 
     // Read middle line as an array of words
 //    mem.setPointer(1);

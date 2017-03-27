@@ -41,7 +41,6 @@ public class ExternalMemory implements Channel {
   public ExternalMemory(String path) {
     try {
       raf = new RandomAccessFile(path, "rwd");
-      initialize();
     } catch (FileNotFoundException e) {
       e.printStackTrace();
       throw new IllegalStateException(String.format("External memory file (%s) missing and couldn't be created!", path));
@@ -51,7 +50,7 @@ public class ExternalMemory implements Channel {
   /**
    * Initializes external memory file with {@link #FILLER}.
    */
-  private void initialize() {
+  public void initialize() {
     // Create initial word
     String string = "";
     for (int i = 0; i < Word.LENGTH; i++) {

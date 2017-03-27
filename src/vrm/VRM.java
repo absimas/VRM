@@ -148,21 +148,28 @@ public class VRM {
       virtualMachine.IC++;
 
       // 2. Read instruction pointed by the saved IC
-      final Command command;
+      // Get word
+      final Word word;
       try {
-        command = Command.parse(virtualMachine.memory.get(savedIC));
-      } catch (InvalidCommandException | InvalidArgumentsException e) {
-        e.printStackTrace();
-
-        // 5. Invalid instruction
-        realMachine.PI = RealMachine.ProgramInterrupt.INV_OP;
-        programInterrupt();
-        continue;
+        word = virtualMachine.memory.get(savedIC);
       } catch (MemoryOutOfBoundsException e) {
         e.printStackTrace();
 
         // 6. Invalid address (pointed by IC)
         realMachine.PI = RealMachine.ProgramInterrupt.INV_ADDRESS;
+        programInterrupt();
+        continue;
+      }
+      // Parse command
+      final Command command;
+      try {
+        command = Command.parse(word);
+      } catch (InvalidCommandException | InvalidArgumentsException e) {
+        e.printStackTrace();
+
+        // 5. Invalid instruction
+        realMachine.PI = RealMachine.ProgramInterrupt.INV_OP;
+        commandLog.add(String.format("%s in %s", word.toString(), virtualMachine));
         programInterrupt();
         continue;
       }

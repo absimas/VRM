@@ -480,6 +480,7 @@ public class RealMachine extends Machine {
     } catch (InvalidArgumentsException | InvalidCommandException e) {
       // IC is pointing to an invalid command
       e.printStackTrace();
+      commandLog.add(String.format("%s in %s", word.toString(), virtualMachine));
       throw new RuntimeException(String.format("RM encountered an invalid command: %s!", word));
     }
 

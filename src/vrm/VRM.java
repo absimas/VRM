@@ -308,6 +308,13 @@ public class VRM {
   }
 
   private void programInterrupt() throws InterruptedException {
+    // Suspend current VM
+    if (virtualMachine != null) {
+      synchronized (virtualMachine) {
+        realMachine.suspendVM(virtualMachine);
+      }
+    }
+
     // Get handler index
     int address;
     switch (realMachine.PI) {
@@ -383,6 +390,13 @@ public class VRM {
    */
   private void ioiInterrupt(int channel) throws InterruptedException {
     if (!Utils.checkFlag(realMachine.IOI, channel)) return;
+
+    // Suspend current VM
+    if (virtualMachine != null) {
+      synchronized (virtualMachine) {
+        realMachine.suspendVM(virtualMachine);
+      }
+    }
 
     // Get handler index
     int address = 10 + channel;

@@ -22,63 +22,11 @@ public class VRM {
   public final RealMachine realMachine;
   private final MainController ui;
 
+  /**
+   * Reference {@link VirtualMachine} that was last executing.
+   * This is different from {@link RealMachine#virtualMachine}, because the latter is cleared as soon as the VM is suspended, while this isn't.
+   */
   public VirtualMachine virtualMachine;
-
-//  private void vmCreationExample() {
-//    final RealMachine rm = new RealMachine(new Memory(RealMachine.MEMORY_SIZE));
-//
-//    // Create 3 VMs that use independent memory blocks of the RM
-//    // Created VMs will have memories: [0..9], [10..19], [20..29]
-//    for (int i = 0; i < 3; i++) {
-//      // Allocate VM memory
-//      final int vmMemoryOffset = i * RealMachine.VM_MEMORY_SIZE;
-//      final Memory vmMemory = rm.memory.sublist(vmMemoryOffset, vmMemoryOffset + RealMachine.VM_MEMORY_SIZE);
-//
-//      // Create and save VM page table
-//      final int vmPageTableOffset = RealMachine.INTERRUPT_TABLE_SIZE + i * RealMachine.VM_MEMORY_SIZE / 10;
-//      final PageTable vmPageTable = new PageTable(Utils.generateRange(vmMemoryOffset, vmMemoryOffset + RealMachine.VM_MEMORY_SIZE));
-//      rm.memory.replace(vmPageTableOffset, vmPageTable.table);
-//
-//      // Create VM
-//      final VirtualMachine vm = new VirtualMachine(rm, vmMemory);
-//
-//      // Reference newly created VM as the current one
-//      rm.virtualMachine = vm;
-//      rm.PTR = vmPageTableOffset;
-//    }
-//  }
-//
-//  private void commandExample1() {
-//    new Command(Command.Type.AD, 0, 1, 5); // AD015
-//    new Command(Command.Type.STVM, 0); // STVM0
-//    new Command(Command.Type.HALT); // HALT
-//  }
-//
-//  private void commandExample2() {
-//    // Prepare commands that we'll use
-//    commands.clear();
-//    commands.add("PD013");
-//    commands.add("CR013");
-//    commands.add("AD012");
-//    commands.add("CP023");
-//    commands.add("JM024");
-//    commands.add("CM011");
-//    commands.add("CR013");
-//    commands.add("CR011");
-//    commands.add("CM013");
-//    commands.add("JP000");
-//
-//    // Parse commands
-//    try {
-//      for (String string : commands) {
-//        Command.parse(string);
-//        // Execute command
-//      }
-//    } catch (InvalidCommandException | InvalidArgumentsException e) {
-//      // Interrupt
-//      e.printStackTrace();
-//    }
-//  }
 
   /**
    * Create a VRM object that performs the CPU algorithm and contains all the registers.
@@ -299,6 +247,7 @@ public class VRM {
       realMachine.IC++;
       command = realMachine.stepQuietly();
     }
+    virtualMachine = realMachine.virtualMachine;
 
     // Reset mode
     realMachine.MODE = RealMachine.Mode.U;
@@ -349,6 +298,7 @@ public class VRM {
       realMachine.IC++;
       command = realMachine.stepQuietly();
     }
+    virtualMachine = realMachine.virtualMachine;
 
     // Reset mode
     realMachine.MODE = RealMachine.Mode.U;
@@ -416,6 +366,7 @@ public class VRM {
       realMachine.IC++;
       command = realMachine.stepQuietly();
     }
+    virtualMachine = realMachine.virtualMachine;
 
     // Reset mode
     realMachine.MODE = RealMachine.Mode.U;

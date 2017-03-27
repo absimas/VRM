@@ -236,7 +236,6 @@ public class VRM {
     realMachine.memory.replace(index++, new Word(Utils.precedeZeroes(address, Word.LENGTH)));
 
     // 2. Incorrect operation - PI
-    index++;
     address += words.length;
     words = new Word[] { new Word("PD" + Utils.precedeZeroes(address+2, Word.LENGTH-2)), new Word("STVM0"), new Word("PI_OP") };
     realMachine.memory.replace(address, words);

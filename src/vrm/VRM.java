@@ -325,22 +325,25 @@ public class VRM {
    * @param failedIC IC value pointing to the failing command
    */
   private void superInterrupt(int failedIC) throws InterruptedException {
-    // Convert the saved IC into an absolute address
+    // Super
+    realMachine.MODE = RealMachine.Mode.S;
+
+    // Execute VM's command in RM
     realMachine.IC = realMachine.getAbsoluteAddress(failedIC);
+    realMachine.stepQuietly();
 
-    // Execute the command, now in the RM
-    realMachine.step();
-
-    // Unprivileged command was executed in the RM.
-    // We can now clear the SI register.
+    // Clear SI
     realMachine.SI = RealMachine.SuperInterrupt.NONE;
 
-    // Now that registers have been modified, wait for the next command
+    // Wait for STVM
     realMachine.doWait();
 
     // Imitate VM creation command to get back to VM execution
     realMachine.execute(new Command(Command.Type.STVM, 0));
     virtualMachine = realMachine.virtualMachine;
+
+    // Wait for the next command
+    realMachine.doWait();
   }
 
   private void ioiInterrupt() throws InterruptedException {

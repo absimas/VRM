@@ -309,8 +309,16 @@ public class RealMachine extends Machine {
           // Allocate VM memory
           final Memory vmMemory = memory.sublist(vmMemoryOffset, vmMemoryOffset + VM_MEMORY_SIZE);
 
-          // Generate a page table for this memory
-          final PageTable vmPageTable = new PageTable(Utils.generateRange(vmMemoryOffset, vmMemoryOffset + VM_MEMORY_SIZE / 10));
+          // Generate a page table of blocks for this memory
+          final int[] absolutes = new int[10];
+          for (int i = 0; i < absolutes.length; i++) {
+            absolutes[i] = vmMemoryOffset + i * 10;
+          }
+
+          absolutes[9] = 170;
+
+          final PageTable vmPageTable = new PageTable(absolutes);
+
           // Save page table
           memory.replace(vmPageTableOffset, vmPageTable.table);
 

@@ -124,6 +124,15 @@ public class Memory implements Iterable<Word> {
     return new Memory(words.subList(from, to));
   }
 
+  /**
+   * Combines two memories without losing references.
+   */
+  public static Memory combine(Memory memory1, Memory memory2) {
+    List<Word> words = new ArrayList<>(memory1.words);
+    words.addAll(memory2.words);
+    return new Memory(words);
+  }
+
   /* Iterable<Word> */
   @Override
   public Iterator iterator() {

@@ -307,7 +307,9 @@ public class RealMachine extends Machine {
           final int vmMemoryOffset = INTERRUPT_TABLE_SIZE + VM_PAGE_TABLES_SIZE + index * VM_MEMORY_SIZE;
 
           // Allocate VM memory
-          final Memory vmMemory = memory.sublist(vmMemoryOffset, vmMemoryOffset + VM_MEMORY_SIZE);
+          final Memory vmMemory1 = memory.sublist(vmMemoryOffset, vmMemoryOffset + 90);
+          final Memory vmMemory2 = memory.sublist(vmMemoryOffset + 100, vmMemoryOffset + 110);
+          final Memory vmMemory = Memory.combine(vmMemory1, vmMemory2);
 
           // Generate a page table of blocks for this memory
           final int[] absolutes = new int[10];
@@ -435,6 +437,7 @@ public class RealMachine extends Machine {
    * @return absolute (RM) address
    */
   private int getAbsoluteAddress(PageTable pageTable, int relativeAddress) {
+    System.out.println("pageTable = [" + pageTable + "], relativeAddress = [" + relativeAddress + "]");
     // Determine what VM block the address is pointing to
     final int vmMemoryBlock = relativeAddress / 10;
 
@@ -449,7 +452,7 @@ public class RealMachine extends Machine {
    * Gets VM page table at the specified address.
    * @param address page table address
    */
-  private PageTable getPageTable(int address) {
+  public PageTable getPageTable(int address) {
     return new PageTable(memory.get(address, RealMachine.VM_MEMORY_SIZE / 10));
   }
 

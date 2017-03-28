@@ -23,6 +23,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.util.Callback;
 import vrm.MemoryBlock;
+import vrm.PageTable;
 import vrm.Utils;
 import vrm.VRM;
 import vrm.Word;
@@ -161,10 +162,17 @@ public class MainController implements Initializable {
               if (vrm.realMachine.getVirtualMachineId() == -1) return;
 
               // Add vm-cell style class to all cells that are within the VM's memory
-              final int startInclusive = 7 + vrm.realMachine.getVirtualMachineId() * 10, endExclusive = startInclusive + 10;
-              if (getIndex() >= startInclusive && getIndex() < endExclusive) {
-                getStyleClass().add("vm-cell");
+              final PageTable pageTable = vrm.realMachine.getPageTable(vrm.realMachine.PTR);
+              for (Word word : pageTable.table) {
+                final int startInclusive = word.toNumber() / 10;
+                if (getIndex() >= startInclusive && getIndex() < startInclusive + 1) {
+                  getStyleClass().add("vm-cell");
+                }
               }
+//              final int startInclusive = 7 + vrm.realMachine.getVirtualMachineId() * 10, endExclusive = startInclusive + 10;
+//              if (getIndex() >= startInclusive && getIndex() < endExclusive) {
+//                getStyleClass().add("vm-cell");
+//              }
             }
           };
         }

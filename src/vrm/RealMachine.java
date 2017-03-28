@@ -437,15 +437,15 @@ public class RealMachine extends Machine {
    * @return absolute (RM) address
    */
   private int getAbsoluteAddress(PageTable pageTable, int relativeAddress) {
-    System.out.println("pageTable = [" + pageTable + "], relativeAddress = [" + relativeAddress + "]");
     // Determine what VM block the address is pointing to
     final int vmMemoryBlock = relativeAddress / 10;
 
     // Calculate address offset from the beginning of that block
-    final int addressOffset = relativeAddress - vmMemoryBlock;
+    final int addressOffset = relativeAddress - vmMemoryBlock * 10;
 
     // Determine absolute address for the given relative address
-    return pageTable.table[vmMemoryBlock].toNumber() + addressOffset;
+    final int res = pageTable.table[vmMemoryBlock].toNumber() + addressOffset;
+    return res;
   }
 
   /**
@@ -523,7 +523,7 @@ public class RealMachine extends Machine {
    * @param command original command with relative arguments
    * @return command with absolute arguments
    */
-  private Command getAbsoluteCommand(Command command) {
+  public Command getAbsoluteCommand(Command command) {
     final String absolute = Utils.precedeZeroes(getAbsoluteAddress(command.getArgument()), 3);
 
     final int count = command.type.argCount;

@@ -209,11 +209,44 @@ public class VRM {
     realMachine.memory.replace(address, words);
     realMachine.memory.replace(index++, new Word(Utils.precedeZeroes(address, Word.LENGTH)));
 
-    // 5-10. Super interrupts. They don't have a custom handler.
+    // 5. GD - PI
+    address += words.length;
+    words = new Word[] { new Word(), new Word("STVM0") };
+    realMachine.memory.replace(address, words);
+    realMachine.memory.replace(index++, new Word(Utils.precedeZeroes(address, Word.LENGTH)));
+
+    // 6. PD - PI
+    address += words.length;
+    words = new Word[] { new Word(), new Word("STVM0") };
+    realMachine.memory.replace(address, words);
+    realMachine.memory.replace(index++, new Word(Utils.precedeZeroes(address, Word.LENGTH)));
+
+    // 7. RD - PI
+    address += words.length;
+    words = new Word[] { new Word(), new Word("STVM0") };
+    realMachine.memory.replace(address, words);
+    realMachine.memory.replace(index++, new Word(Utils.precedeZeroes(address, Word.LENGTH)));
+
+    // 8. WD - PI
+    address += words.length;
+    words = new Word[] { new Word(), new Word("STVM0") };
+    realMachine.memory.replace(address, words);
+    realMachine.memory.replace(index++, new Word(Utils.precedeZeroes(address, Word.LENGTH)));
+
+    // 9. SD - PI
+    address += words.length;
+    words = new Word[] { new Word(), new Word("STVM0") };
+    realMachine.memory.replace(address, words);
+    realMachine.memory.replace(index++, new Word(Utils.precedeZeroes(address, Word.LENGTH)));
+
+    // 10. HALT - PI
+    address += words.length;
+    words = new Word[] { new Word("JP" + Utils.precedeZeroes(address, 3)), new Word("STVM0") };
+    realMachine.memory.replace(address, words);
+    realMachine.memory.replace(index++, new Word(Utils.precedeZeroes(address, Word.LENGTH)));
 
     // 11. 1st channel work end - IOI
     address += words.length;
-    index = 11;
     words = new Word[] { new Word("PD" + Utils.precedeZeroes(address+2, Word.LENGTH-2)), new Word("STVM0"), new Word("IOI_1") };
     realMachine.memory.replace(address, words);
     realMachine.memory.replace(index++, new Word(Utils.precedeZeroes(address, Word.LENGTH)));
@@ -328,21 +361,65 @@ public class VRM {
     // Super
     realMachine.MODE = RealMachine.Mode.S;
 
-    // Execute VM's command in RM
-    realMachine.IC = realMachine.getAbsoluteAddress(failedIC);
-    realMachine.step(realMachine.SI != RealMachine.SuperInterrupt.SD);
+    int address;
+    switch (realMachine.SI) {
+      case GD:
+        address = 5;
+        break;
+      case PD:
+        address = 6;
+        break;
+      case RD:
+        address = 7;
+        break;
+      case WD:
+        address = 8;
+        break;
+      case SD:
+        address = 9;
+        break;
+      case HALT:
+        address = 10;
+        break;
+      default:
+        return;
+    }
+
+    address = realMachine.memory.get(address).toNumber();
+
+    // Modify VM arguments to absolute address
+    final int absolute = realMachine.getAbsoluteAddress(failedIC);
+    final Command relativeCommand;
+    try {
+      relativeCommand = Command.parse(realMachine.memory.get(absolute));
+    } catch (InvalidCommandException e) {
+      e.printStackTrace();
+      return;
+    } catch (InvalidArgumentsException e) {
+      e.printStackTrace();
+      return;
+    }
+
+    if (realMachine.SI != RealMachine.SuperInterrupt.HALT) {
+      realMachine.memory.replace(address, String.format("%-5s", realMachine.getAbsoluteCommand(relativeCommand).toString()));
+    }
+
+    realMachine.IC = address;
+
+    while (true) {
+      final Command command = realMachine.step(false);
+      if (command.type == Command.Type.STVM) break;
+      // If a non-final (STVM) command was executed, wait and then increment IC for the next iteration
+      realMachine.doWait();
+        realMachine.IC++;
+    }
+    // Now, since STVM was executed, update VM reference
+    virtualMachine = realMachine.virtualMachine;
 
     // Clear SI
     realMachine.SI = RealMachine.SuperInterrupt.NONE;
 
     // Wait for STVM
-    realMachine.doWait();
-
-    // Imitate VM creation command to get back to VM execution
-    realMachine.execute(new Command(Command.Type.STVM, 0));
-    virtualMachine = realMachine.virtualMachine;
-
-    // Wait for the next command
     realMachine.doWait();
   }
 

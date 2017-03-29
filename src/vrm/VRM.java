@@ -50,7 +50,7 @@ public class VRM {
 
     // Store a program (fibonacci less than 1000) in VM memory
     final Memory program = virtualMachine.memory;
-    program.replace(0, "PD013");
+    program.replace(0, "HALT ");
     program.replace(1, "CR013");
     program.replace(2, "AD012");
     program.replace(3, "CP014");
@@ -144,7 +144,7 @@ public class VRM {
 
       // 11. Handle interruptions
       if (realMachine.SI.ordinal() > 0) {
-        superInterrupt(savedIC);
+        superInterrupt(command, savedIC);
       } else if (realMachine.PI.ordinal() > 0) {
         programInterrupt();
       } else if (realMachine.TI <= 0) {
@@ -355,9 +355,10 @@ public class VRM {
   /**
    * When a VM can't execute a command, we duplicate saved IC value and execute the command in the RM.
    * When RM executes a command that's located in the context of a VM, the argument is converted to an absolute address.
-   * @param failedIC IC value pointing to the failing command
+   * @param command  command whose execution failed within a VM
+   * @param ic       relative instruction address pointing to the command that failed
    */
-  private void superInterrupt(int failedIC) throws InterruptedException {
+  private void superInterrupt(Command command, int ic) throws InterruptedException {
     // Super
     realMachine.MODE = RealMachine.Mode.S;
 
@@ -384,34 +385,39 @@ public class VRM {
       default:
         return;
     }
-
     address = realMachine.memory.get(address).toNumber();
-
-    // Modify VM arguments to absolute address
-    final int absolute = realMachine.getAbsoluteAddress(failedIC);
-    final Command relativeCommand;
-    try {
-      relativeCommand = Command.parse(realMachine.memory.get(absolute));
-    } catch (InvalidCommandException e) {
-      e.printStackTrace();
-      return;
-    } catch (InvalidArgumentsException e) {
-      e.printStackTrace();
-      return;
-    }
-
-    if (realMachine.SI != RealMachine.SuperInterrupt.HALT) {
-      realMachine.memory.replace(address, String.format("%-5s", realMachine.getAbsoluteCommand(relativeCommand).toString()));
-    }
-
     realMachine.IC = address;
 
+    // HALT interruption does not modify the command or the handler's program
+    if (realMachine.SI != RealMachine.SuperInterrupt.HALT) {
+      // Modify command arguments and save it at this interruption handler's beginning
+      command = realMachine.getAbsoluteCommand(command);
+      realMachine.memory.replace(address, String.format("%-5s", command.toString()));
+    }
+
     while (true) {
-      final Command command = realMachine.step(false);
+      // Save IC
+      final int savedIC = realMachine.IC;
+
+      // Increment IC
+      realMachine.IC++;
+
+      // Read instruction pointed by the saved IC
+      // Get word
+      final Word word = realMachine.memory.get(savedIC);
+      // Parse command
+      try {
+        command = Command.parse(word);
+      } catch (Exception e) {
+        e.printStackTrace();
+        throw new RuntimeException(e);
+      }
+      // Execute instruction
+      realMachine.execute(command);
+
       if (command.type == Command.Type.STVM) break;
-      // If a non-final (STVM) command was executed, wait and then increment IC for the next iteration
+
       realMachine.doWait();
-        realMachine.IC++;
     }
     // Now, since STVM was executed, update VM reference
     virtualMachine = realMachine.virtualMachine;

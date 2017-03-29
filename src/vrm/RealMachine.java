@@ -524,6 +524,9 @@ public class RealMachine extends Machine {
    * @return command with absolute arguments
    */
   public Command getAbsoluteCommand(Command command) {
+    // HALT has no arguments that need to be converted
+    if (command.type == Command.Type.HALT) return command;
+
     final String absolute = Utils.precedeZeroes(getAbsoluteAddress(command.getArgument()), 3);
 
     final int count = command.type.argCount;

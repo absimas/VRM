@@ -114,7 +114,7 @@ public class Command {
     final int[] args;
     for (Type type : Type.values()) {
       if (string.startsWith(type.name())) {
-        args = extractArguments(string, Type.CR);
+        args = extractArguments(string, type);
         return new Command(type, args);
       }
     }
